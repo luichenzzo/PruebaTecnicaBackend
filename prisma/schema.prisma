@@ -1,0 +1,337 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum UserRole {
+  ADMIN
+  MANAGER
+  OPERATOR
+}
+
+enum MovementType {
+  IN
+  OUT
+  TRANSFER
+  ADJUSTMENT
+}
+
+enum TransferStatus {
+  PENDING
+  IN_TRANSIT
+  COMPLETED
+  PARTIAL
+}
+
+// Models
+model User {
+  id    String   @id @default(uuid())
+  email String   @unique
+  name  String?
+  role  UserRole @default(OPERATOR)
+
+  // Audit relations: records created/updated by this user
+  createdPurchaseOrders PurchaseOrder[] @relation("UserCreatedPurchaseOrders")
+  updatedPurchaseOrders PurchaseOrder[] @relation("UserUpdatedPurchaseOrders")
+
+  createdSales Sale[] @relation("UserCreatedSales")
+  updatedSales Sale[] @relation("UserUpdatedSales")
+
+  createdTransfers Transfer[] @relation("UserCreatedTransfers")
+  updatedTransfers Transfer[] @relation("UserUpdatedTransfers")
+
+  inventoryMovements InventoryMovement[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Branch {
+  id      String  @id @default(uuid())
+  name    String
+  code    String? @unique
+  address String?
+
+  inventories Inventory[]
+
+  // Transfers where this branch is origin
+  outgoingTransfers Transfer[] @relation("TransferOrigin")
+  // Transfers where this branch is destination
+  incomingTransfers Transfer[] @relation("TransferDestination")
+
+  purchaseOrders PurchaseOrder[]
+  sales          Sale[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UnitOfMeasure {
+  id   String @id @default(uuid())
+  code String @unique
+  name String
+
+  products           Product[]
+  // Items can optionally reference a unit if needed
+  purchaseOrderItems PurchaseOrderItem[]
+  saleItems          SaleItem[]
+  transferItems      TransferItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Supplier {
+  id      String  @id @default(uuid())
+  name    String
+  email   String?
+  phone   String?
+  address String?
+
+  purchaseOrders PurchaseOrder[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  sku         String? @unique
+  name        String
+  description String?
+
+  unitOfMeasureId String?
+  unitOfMeasure   UnitOfMeasure? @relation(fields: [unitOfMeasureId], references: [id])
+
+  supplierId String?
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
+
+  inventories        Inventory[]
+  purchaseOrderItems PurchaseOrderItem[]
+  saleItems          SaleItem[]
+  transferItems      TransferItem[]
+  inventoryMovements InventoryMovement[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sku])
+}
+
+// Inventory: one unique record per (productId, branchId) as required
+model Inventory {
+  id        String @id @default(uuid())
+  productId String
+  branchId  String
+
+  product  Product @relation(fields: [productId], references: [id])
+  minStock Float?
+  avgCost  Float?
+  branch   Branch  @relation(fields: [branchId], references: [id])
+
+  // Current on-hand quantity for this product at this branch
+  quantity Float @default(0)
+
+  // Optional fields for reserved/available can be added later
+  // Trace of movements affecting this inventory
+  movements InventoryMovement[] @relation("MovementInventory")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Audit
+  createdById String?
+  createdBy   User?   @relation(fields: [createdById], references: [id])
+  updatedById String?
+  updatedBy   User?   @relation(fields: [updatedById], references: [id])
+
+  @@unique([productId, branchId])
+  @@index([productId])
+  @@index([branchId])
+}
+
+// All inventory changes are recorded here for traceability
+model InventoryMovement {
+  id       String       @id @default(uuid())
+  type     MovementType
+  quantity Float
+  date     DateTime     @default(now())
+  reason   String?
+
+  // The user who performed/created the movement
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Link to the inventory record (product + branch) affected. Optional for some movements.
+  inventoryId String?
+  inventory   Inventory? @relation("MovementInventory", fields: [inventoryId], references: [id])
+
+  // Optional relations to business documents that caused the movement
+  saleId String?
+  sale   Sale?   @relation("MovementSale", fields: [saleId], references: [id])
+
+  branchId String
+  branch   Branch @relation(fields: [branchId], references: [id])
+
+  purchaseOrderId String?
+  purchaseOrder   PurchaseOrder? @relation("MovementPurchaseOrder", fields: [purchaseOrderId], references: [id])
+
+  transferId String?
+  transfer   Transfer? @relation("MovementTransfer", fields: [transferId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([inventoryId])
+  @@index([saleId])
+  @@index([purchaseOrderId])
+  @@index([transferId])
+}
+
+// Purchase order header
+model PurchaseOrder {
+  id         String @id @default(uuid())
+  supplierId String
+  branchId   String
+
+  supplier Supplier @relation(fields: [supplierId], references: [id])
+  branch   Branch   @relation(fields: [branchId], references: [id])
+
+  // Items
+  items PurchaseOrderItem[]
+
+  // Movements created from this purchase order (stock IN)
+  movements InventoryMovement[] @relation("MovementPurchaseOrder")
+
+  // Audit
+  createdById String?
+  createdBy   User?   @relation("UserCreatedPurchaseOrders", fields: [createdById], references: [id])
+  updatedById String?
+  updatedBy   User?   @relation("UserUpdatedPurchaseOrders", fields: [updatedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([supplierId])
+  @@index([branchId])
+}
+
+model PurchaseOrderItem {
+  id              String  @id @default(uuid())
+  purchaseOrderId String
+  productId       String
+  unitOfMeasureId String?
+
+  purchaseOrder PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id])
+  product       Product        @relation(fields: [productId], references: [id])
+  unitOfMeasure UnitOfMeasure? @relation(fields: [unitOfMeasureId], references: [id])
+
+  quantity  Float
+  unitPrice Float
+  // Store line total for historical accuracy
+  lineTotal Float
+
+  createdAt DateTime @default(now())
+
+  @@index([purchaseOrderId])
+  @@index([productId])
+}
+
+// Sale header
+model Sale {
+  id       String @id @default(uuid())
+  branchId String
+
+  branch Branch @relation(fields: [branchId], references: [id])
+
+  items SaleItem[]
+
+  // Movements created from this sale (stock OUT)
+  movements InventoryMovement[] @relation("MovementSale")
+
+  // Audit
+  createdById String?
+  createdBy   User?   @relation("UserCreatedSales", fields: [createdById], references: [id])
+  updatedById String?
+  updatedBy   User?   @relation("UserUpdatedSales", fields: [updatedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reference String?
+
+  @@index([branchId])
+}
+
+model SaleItem {
+  id              String  @id @default(uuid())
+  saleId          String
+  productId       String
+  unitOfMeasureId String?
+
+  sale          Sale           @relation(fields: [saleId], references: [id])
+  product       Product        @relation(fields: [productId], references: [id])
+  unitOfMeasure UnitOfMeasure? @relation(fields: [unitOfMeasureId], references: [id])
+
+  quantity  Float
+  unitPrice Float
+  lineTotal Float
+
+  createdAt DateTime @default(now())
+
+  @@index([saleId])
+  @@index([productId])
+}
+
+// Transfer between branches
+model Transfer {
+  id                  String         @id @default(uuid())
+  originBranchId      String
+  destinationBranchId String
+  status              TransferStatus @default(PENDING)
+
+  originBranch         Branch    @relation("TransferOrigin", fields: [originBranchId], references: [id])
+  destinationBranch    Branch    @relation("TransferDestination", fields: [destinationBranchId], references: [id])
+  shippedAt            DateTime?
+  receivedAt           DateTime?
+  expectedDeliveryDate DateTime?
+
+  items TransferItem[]
+
+  // Movements produced by this transfer (could be OUT from origin and IN to destination)
+  movements InventoryMovement[] @relation("MovementTransfer")
+
+  // Audit
+  createdById String?
+  createdBy   User?   @relation("UserCreatedTransfers", fields: [createdById], references: [id])
+  updatedById String?
+  updatedBy   User?   @relation("UserUpdatedTransfers", fields: [updatedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([originBranchId])
+  @@index([destinationBranchId])
+}
+
+model TransferItem {
+  id              String  @id @default(uuid())
+  transferId      String
+  productId       String
+  unitOfMeasureId String?
+
+  transfer      Transfer       @relation(fields: [transferId], references: [id])
+  product       Product        @relation(fields: [productId], references: [id])
+  unitOfMeasure UnitOfMeasure? @relation(fields: [unitOfMeasureId], references: [id])
+
+  quantity Float
+
+  createdAt DateTime @default(now())
+
+  @@index([transferId])
+  @@index([productId])
+}
