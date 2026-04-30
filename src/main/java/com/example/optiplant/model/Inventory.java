@@ -8,6 +8,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,8 @@ import java.util.List;
 @Table(name = "inventories", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"product_id", "branch_id"})
 })
+@Getter
+@Setter
 public class Inventory extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,44 +40,6 @@ public class Inventory extends BaseEntity {
     @OneToMany(mappedBy = "inventory")
     private List<InventoryMovement> movements = new ArrayList<>();
 
-    public Product getProduct() {
-        return product;
-    }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Branch getBranch() {
-        return branch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
-
-    public BigDecimal getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(BigDecimal quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigDecimal getReserved() {
-        return reserved;
-    }
-
-    public void setReserved(BigDecimal reserved) {
-        this.reserved = reserved;
-    }
-
-    public List<InventoryMovement> getMovements() {
-        return movements;
-    }
-
-    public void setMovements(List<InventoryMovement> movements) {
-        this.movements = movements;
-    }
 }
 

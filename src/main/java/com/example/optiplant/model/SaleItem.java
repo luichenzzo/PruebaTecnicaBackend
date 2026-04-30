@@ -6,10 +6,15 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "sale_items")
+@Getter
+@Setter
 public class SaleItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,36 +31,5 @@ public class SaleItem extends BaseEntity {
     @Column(name = "unit_price", precision = 19, scale = 4)
     private BigDecimal unitPrice;
 
-    public Sale getSale() {
-        return sale;
-    }
-
-    public void setSale(Sale sale) {
-        this.sale = sale;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public BigDecimal getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(BigDecimal quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigDecimal getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(BigDecimal unitPrice) {
-        this.unitPrice = unitPrice;
-    }
 }
 

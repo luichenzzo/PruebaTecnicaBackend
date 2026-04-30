@@ -11,11 +11,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "transfers")
+@Getter
+@Setter
 public class Transfer extends BaseEntity {
 
     @Column(name = "transfer_number", nullable = false, unique = true)
@@ -40,52 +45,6 @@ public class Transfer extends BaseEntity {
     @JoinColumn(name = "created_by_id")
     private User createdBy;
 
-    public String getTransferNumber() {
-        return transferNumber;
-    }
 
-    public void setTransferNumber(String transferNumber) {
-        this.transferNumber = transferNumber;
-    }
-
-    public Branch getFromBranch() {
-        return fromBranch;
-    }
-
-    public void setFromBranch(Branch fromBranch) {
-        this.fromBranch = fromBranch;
-    }
-
-    public Branch getToBranch() {
-        return toBranch;
-    }
-
-    public void setToBranch(Branch toBranch) {
-        this.toBranch = toBranch;
-    }
-
-    public TransferStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TransferStatus status) {
-        this.status = status;
-    }
-
-    public List<TransferItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<TransferItem> items) {
-        this.items = items;
-    }
-
-    public User getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
 }
 

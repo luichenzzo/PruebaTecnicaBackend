@@ -11,12 +11,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "purchase_orders")
+@Getter
+@Setter
 public class PurchaseOrder extends BaseEntity {
 
     @Column(name = "order_number", nullable = false, unique = true)
@@ -44,61 +49,6 @@ public class PurchaseOrder extends BaseEntity {
     @Column(name = "total", precision = 19, scale = 4)
     private BigDecimal total;
 
-    // Getters / setters
-    public String getOrderNumber() {
-        return orderNumber;
-    }
 
-    public void setOrderNumber(String orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-
-    public Supplier getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
-    }
-
-    public Branch getBranch() {
-        return branch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
-
-    public List<PurchaseOrderItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<PurchaseOrderItem> items) {
-        this.items = items;
-    }
-
-    public User getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public BigDecimal getTotal() {
-        return total;
-    }
-
-    public void setTotal(BigDecimal total) {
-        this.total = total;
-    }
 }
 

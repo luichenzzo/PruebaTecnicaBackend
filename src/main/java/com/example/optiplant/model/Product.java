@@ -7,12 +7,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "products")
+@Getter
+@Setter
 public class Product extends BaseEntity {
 
     @Column(name = "sku", nullable = false, unique = true)
@@ -38,60 +43,6 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     private List<Inventory> inventories = new ArrayList<>();
 
-    public String getSku() {
-        return sku;
-    }
 
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public UnitOfMeasure getUnitOfMeasure() {
-        return unitOfMeasure;
-    }
-
-    public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
-        this.unitOfMeasure = unitOfMeasure;
-    }
-
-    public Supplier getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
-    }
-
-    public BigDecimal getDefaultCost() {
-        return defaultCost;
-    }
-
-    public void setDefaultCost(BigDecimal defaultCost) {
-        this.defaultCost = defaultCost;
-    }
-
-    public List<Inventory> getInventories() {
-        return inventories;
-    }
-
-    public void setInventories(List<Inventory> inventories) {
-        this.inventories = inventories;
-    }
 }
 

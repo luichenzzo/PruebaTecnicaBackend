@@ -9,9 +9,13 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class User extends BaseEntity {
 
     @Column(name = "username", nullable = false, unique = true)
@@ -35,52 +39,6 @@ public class User extends BaseEntity {
     private Branch branch;
 
     // Getters and setters
-    public String getUsername() {
-        return username;
-    }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Branch getBranch() {
-        return branch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
 }
 
