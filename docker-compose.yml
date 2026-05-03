@@ -1,0 +1,23 @@
+version: '3.8'
+
+# Note: The Postgres database is intentionally not included here.
+# This compose file only brings up pgAdmin for database administration.
+# Run your Postgres instance in a dedicated compose/project or a managed service,
+# and point pgAdmin (or your application) to that database.
+
+services:
+  pgadmin:
+    image: dpage/pgadmin4:7
+    container_name: optiplant-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local.test
+      PGADMIN_DEFAULT_PASSWORD: ChangeMe!
+    ports:
+      - '8080:80'
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  pgadmin-data:
+
+
