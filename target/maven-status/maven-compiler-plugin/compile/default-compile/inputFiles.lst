@@ -1,3 +1,11 @@
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\config\SecurityConfig.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\controller\AuthController.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\ApiErrorResponse.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\AuthResponse.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\LoginRequest.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\RegisterRequest.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\UserResponse.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\exceptions\GlobalExceptionHandler.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\model\BaseEntity.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\model\Branch.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\model\enums\MovementType.java
@@ -18,3 +26,9 @@ C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\ja
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\model\UnitOfMeasure.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\model\User.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\OptiplantApplication.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\repository\BranchRepository.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\repository\UserRepository.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\security\CustomUserDetailsService.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\security\JwtAuthenticationFilter.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\security\JwtService.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\AuthService.java
