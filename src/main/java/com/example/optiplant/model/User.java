@@ -38,7 +38,6 @@ public class User extends BaseEntity {
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    // Getters and setters
 
 }
 
