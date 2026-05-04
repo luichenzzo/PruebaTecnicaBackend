@@ -1,3 +1,28 @@
+-- Reset schema so this script can be re-run safely during local development.
+DROP TABLE IF EXISTS
+  transfer_items,
+  transfers,
+  sale_items,
+  sales,
+  purchase_order_items,
+  purchase_orders,
+  inventory_movements,
+  inventories,
+  users,
+  products,
+  suppliers,
+  unit_of_measure,
+  branches
+CASCADE;
+
+DROP FUNCTION IF EXISTS update_updated_at_column() CASCADE;
+
+DROP TYPE IF EXISTS transfer_status_enum CASCADE;
+DROP TYPE IF EXISTS sale_status_enum CASCADE;
+DROP TYPE IF EXISTS order_status_enum CASCADE;
+DROP TYPE IF EXISTS movement_type_enum CASCADE;
+DROP TYPE IF EXISTS role_enum CASCADE;
+
 -- Enable pgcrypto for gen_random_uuid(); change if you prefer uuid-ossp/uuid_generate_v4()
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
@@ -32,6 +57,8 @@ CREATE TABLE branches (
                           id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
                           created_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
                           updated_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
+                          created_by_id uuid,
+                          updated_by_id uuid,
                           code text NOT NULL UNIQUE,
                           name text NOT NULL,
                           address text
@@ -42,6 +69,8 @@ CREATE TABLE unit_of_measure (
                                  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
                                  created_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
                                  updated_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
+                                 created_by_id uuid,
+                                 updated_by_id uuid,
                                  code text NOT NULL UNIQUE,
                                  name text NOT NULL,
                                  description text
@@ -52,6 +81,8 @@ CREATE TABLE suppliers (
                            id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
                            created_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
                            updated_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
+                           created_by_id uuid,
+                           updated_by_id uuid,
                            name text NOT NULL,
                            contact_name text,
                            contact_email text,
@@ -63,6 +94,8 @@ CREATE TABLE products (
                           id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
                           created_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
                           updated_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
+                          created_by_id uuid,
+                          updated_by_id uuid,
                           sku text NOT NULL UNIQUE,
                           name text NOT NULL,
                           description text,
@@ -79,6 +112,8 @@ CREATE TABLE users (
                        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
                        created_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
                        updated_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
+                       created_by_id uuid,
+                       updated_by_id uuid,
                        username text NOT NULL UNIQUE,
                        full_name text NOT NULL,
                        email text NOT NULL UNIQUE,
@@ -94,6 +129,8 @@ CREATE TABLE inventories (
                              id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
                              created_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
                              updated_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
+                             created_by_id uuid,
+                             updated_by_id uuid,
                              product_id uuid NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
                              branch_id uuid NOT NULL REFERENCES branches(id) ON DELETE RESTRICT,
                              quantity numeric(19,4) NOT NULL DEFAULT 0 CHECK (quantity >= 0),
@@ -114,7 +151,10 @@ CREATE TABLE inventory_movements (
                                      quantity numeric(19,4) NOT NULL CHECK (quantity >= 0),
                                      reference text,
                                      notes text,
-                                     created_by_id uuid REFERENCES users(id) ON DELETE SET NULL
+                                     source_type text,
+                                     source_id text,
+                                     created_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
+                                     updated_by_id uuid REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE INDEX idx_inventory_movements_inventory_id ON inventory_movements(inventory_id);
@@ -130,6 +170,7 @@ CREATE TABLE purchase_orders (
                                  branch_id uuid NOT NULL REFERENCES branches(id) ON DELETE RESTRICT,
                                  status order_status_enum NOT NULL DEFAULT 'PENDING',
                                  created_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
+                                 updated_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
                                  total numeric(19,4)
 );
 
@@ -142,6 +183,8 @@ CREATE TABLE purchase_order_items (
                                       id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
                                       created_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
                                       updated_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
+                                      created_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
+                                      updated_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
                                       purchase_order_id uuid NOT NULL REFERENCES purchase_orders(id) ON DELETE CASCADE,
                                       product_id uuid NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
                                       quantity numeric(19,4) NOT NULL CHECK (quantity >= 0),
@@ -160,6 +203,7 @@ CREATE TABLE sales (
                        branch_id uuid NOT NULL REFERENCES branches(id) ON DELETE RESTRICT,
                        status sale_status_enum NOT NULL DEFAULT 'PENDING',
                        created_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
+                       updated_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
                        total numeric(19,4)
 );
 
@@ -171,6 +215,8 @@ CREATE TABLE sale_items (
                             id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
                             created_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
                             updated_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
+                            created_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
+                            updated_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
                             sale_id uuid NOT NULL REFERENCES sales(id) ON DELETE CASCADE,
                             product_id uuid NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
                             quantity numeric(19,4) NOT NULL CHECK (quantity >= 0),
@@ -189,7 +235,8 @@ CREATE TABLE transfers (
                            from_branch_id uuid NOT NULL REFERENCES branches(id) ON DELETE RESTRICT,
                            to_branch_id uuid NOT NULL REFERENCES branches(id) ON DELETE RESTRICT,
                            status transfer_status_enum NOT NULL DEFAULT 'PENDING',
-                           created_by_id uuid REFERENCES users(id) ON DELETE SET NULL
+                           created_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
+                           updated_by_id uuid REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE INDEX idx_transfers_from_branch_id ON transfers(from_branch_id);
@@ -201,6 +248,8 @@ CREATE TABLE transfer_items (
                                 id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
                                 created_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
                                 updated_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
+                                created_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
+                                updated_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
                                 transfer_id uuid NOT NULL REFERENCES transfers(id) ON DELETE CASCADE,
                                 product_id uuid NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
                                 quantity numeric(19,4) NOT NULL CHECK (quantity >= 0)

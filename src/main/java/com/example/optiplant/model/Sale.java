@@ -38,10 +38,6 @@ public class Sale extends BaseEntity {
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SaleItem> items = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_id")
-    private User createdBy;
-
     @Column(name = "total", precision = 19, scale = 4)
     private BigDecimal total;
 

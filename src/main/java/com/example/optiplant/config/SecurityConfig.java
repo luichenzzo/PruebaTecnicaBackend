@@ -4,10 +4,13 @@ import com.example.optiplant.security.CustomUserDetailsService;
 import com.example.optiplant.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -36,8 +40,22 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/inventory/**").hasAnyRole("OPERATOR", "MANAGER", "ADMIN")
+                        .requestMatchers("/api/inventory/**").hasAnyRole("MANAGER", "ADMIN")
+                        .requestMatchers("/api/inventory-movements/**").hasAnyRole("MANAGER", "ADMIN")
+                        .requestMatchers("/api/purchase-orders/**").hasAnyRole("MANAGER", "ADMIN")
+                        .requestMatchers("/api/reports/**").hasAnyRole("MANAGER", "ADMIN")
+                        .requestMatchers("/api/sales/**").hasAnyRole("OPERATOR", "MANAGER", "ADMIN")
+                        .requestMatchers("/api/transfers/**").hasAnyRole("MANAGER", "ADMIN")
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Authentication is required"))
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied"))
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

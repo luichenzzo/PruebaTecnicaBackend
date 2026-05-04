@@ -41,10 +41,5 @@ public class Transfer extends BaseEntity {
     @OneToMany(mappedBy = "transfer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TransferItem> items = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_id")
-    private User createdBy;
-
-
 }
 

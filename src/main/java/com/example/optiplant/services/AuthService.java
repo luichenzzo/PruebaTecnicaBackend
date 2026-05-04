@@ -4,13 +4,14 @@ import com.example.optiplant.dto.AuthResponse;
 import com.example.optiplant.dto.LoginRequest;
 import com.example.optiplant.dto.RegisterRequest;
 import com.example.optiplant.dto.UserResponse;
+import com.example.optiplant.exceptions.BadRequestException;
+import com.example.optiplant.exceptions.NotFoundException;
 import com.example.optiplant.model.Branch;
 import com.example.optiplant.model.User;
 import com.example.optiplant.model.enums.Role;
 import com.example.optiplant.repository.BranchRepository;
 import com.example.optiplant.repository.UserRepository;
 import com.example.optiplant.security.JwtService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,11 +47,11 @@ public class AuthService {
         String email = request.email().trim().toLowerCase();
 
         if (userRepository.existsByUsername(username)) {
-            throw new IllegalArgumentException("Username is already registered");
+            throw new BadRequestException("Username is already registered");
         }
 
         if (userRepository.existsByEmailIgnoreCase(email)) {
-            throw new IllegalArgumentException("Email is already registered");
+            throw new BadRequestException("Email is already registered");
         }
 
         User user = new User();
@@ -62,7 +63,7 @@ public class AuthService {
 
         if (request.branchId() != null) {
             Branch branch = branchRepository.findById(request.branchId())
-                    .orElseThrow(() -> new EntityNotFoundException("Branch not found"));
+                    .orElseThrow(() -> new NotFoundException("Branch not found"));
             user.setBranch(branch);
         }
 
@@ -80,14 +81,14 @@ public class AuthService {
 
         User user = userRepository.findByUsername(usernameOrEmail)
                 .or(() -> userRepository.findByEmailIgnoreCase(usernameOrEmail))
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         return new AuthResponse(jwtService.generateToken(user), UserResponse.from(user));
     }
 
     public UserResponse getCurrentUser(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
         return UserResponse.from(user);
     }
 }

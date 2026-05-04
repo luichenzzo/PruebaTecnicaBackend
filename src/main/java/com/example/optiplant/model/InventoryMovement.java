@@ -37,10 +37,11 @@ public class InventoryMovement extends BaseEntity {
     @Column(name = "notes", length = 1000)
     private String notes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_id", nullable = false)
-    private User createdBy;
+    @Column(name = "source_type", length = 50)
+    private String sourceType;
 
+    @Column(name = "source_id")
+    private String sourceId;
 
 }
 

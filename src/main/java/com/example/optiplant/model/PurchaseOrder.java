@@ -42,10 +42,6 @@ public class PurchaseOrder extends BaseEntity {
     @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchaseOrderItem> items = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_id")
-    private User createdBy;
-
     @Column(name = "total", precision = 19, scale = 4)
     private BigDecimal total;
 
