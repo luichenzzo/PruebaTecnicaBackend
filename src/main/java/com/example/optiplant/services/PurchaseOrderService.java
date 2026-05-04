@@ -132,6 +132,23 @@ public class PurchaseOrderService {
         return PurchaseOrderResponse.from(purchaseOrderRepository.save(order));
     }
 
+    @Transactional
+    public PurchaseOrderResponse cancel(UUID id) {
+        currentUserService.getAuthenticatedUser();
+        PurchaseOrder order = getOrder(id);
+
+        if (order.getStatus() == OrderStatus.RECEIVED) {
+            throw new BadRequestException("Received purchase orders cannot be cancelled");
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new BadRequestException("Purchase order is already cancelled");
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        return PurchaseOrderResponse.from(purchaseOrderRepository.save(order));
+    }
+
     private PurchaseOrder getOrder(UUID id) {
         return purchaseOrderRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Purchase order not found"));

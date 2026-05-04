@@ -26,8 +26,10 @@ public class SaleController {
         this.saleService = saleService;
     }
 
+
+    //TODO: Right now, operator has access to all sales, should only have access to his own branch.
     @GetMapping
-    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
     public List<SaleResponse> findAll() {
         return saleService.findAll();
     }

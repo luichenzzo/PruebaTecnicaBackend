@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/products")
-@PreAuthorize("hasRole('ADMIN')")
 public class ProductController {
 
     private final ProductService productService;

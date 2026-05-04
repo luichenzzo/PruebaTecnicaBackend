@@ -5,27 +5,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- Enum types (mirror Java @Enumerated(EnumType.STRING))
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'role_enum') THEN
-    CREATE TYPE role_enum AS ENUM ('ADMIN', 'MANAGER', 'OPERATOR');
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'movement_type_enum') THEN
-    CREATE TYPE movement_type_enum AS ENUM (
-      'PURCHASE_IN',
-      'SALE_OUT',
-      'ADJUSTMENT',
-      'TRANSFER_IN',
-      'TRANSFER_OUT'
-    );
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'order_status_enum') THEN
-    CREATE TYPE order_status_enum AS ENUM ('PENDING', 'RECEIVED', 'CANCELLED');
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'sale_status_enum') THEN
-    CREATE TYPE sale_status_enum AS ENUM ('PENDING', 'COMPLETED', 'CANCELLED');
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'transfer_status_enum') THEN
-    CREATE TYPE transfer_status_enum AS ENUM ('PENDING', 'IN_TRANSIT', 'COMPLETED', 'CANCELLED');
-  END IF;
+  -- enums removed: persisting enums as strings (text) avoids JDBC/PG enum binding issues
 END$$;
 
 -- Generic function to auto-update updated_at
@@ -127,7 +107,7 @@ CREATE TABLE IF NOT EXISTS inventory_movements (
   created_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
   updated_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
   inventory_id uuid NOT NULL REFERENCES inventories(id) ON DELETE CASCADE,
-  movement_type movement_type_enum NOT NULL,
+  movement_type text NOT NULL,
   quantity numeric(19,4) NOT NULL CHECK (quantity >= 0),
   reference text,
   notes text,
@@ -145,7 +125,7 @@ CREATE TABLE IF NOT EXISTS purchase_orders (
   order_number text NOT NULL UNIQUE,
   supplier_id uuid NOT NULL REFERENCES suppliers(id) ON DELETE RESTRICT,
   branch_id uuid NOT NULL REFERENCES branches(id) ON DELETE RESTRICT,
-  status order_status_enum NOT NULL DEFAULT 'PENDING',
+  status text NOT NULL DEFAULT 'PENDING',
   created_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
   total numeric(19,4)
 );
@@ -175,7 +155,7 @@ CREATE TABLE IF NOT EXISTS sales (
   updated_at timestamp WITHOUT time zone NOT NULL DEFAULT now(),
   sale_number text NOT NULL UNIQUE,
   branch_id uuid NOT NULL REFERENCES branches(id) ON DELETE RESTRICT,
-  status sale_status_enum NOT NULL DEFAULT 'PENDING',
+  status text NOT NULL DEFAULT 'PENDING',
   created_by_id uuid REFERENCES users(id) ON DELETE SET NULL,
   total numeric(19,4)
 );
@@ -205,7 +185,7 @@ CREATE TABLE IF NOT EXISTS transfers (
   transfer_number text NOT NULL UNIQUE,
   from_branch_id uuid NOT NULL REFERENCES branches(id) ON DELETE RESTRICT,
   to_branch_id uuid NOT NULL REFERENCES branches(id) ON DELETE RESTRICT,
-  status transfer_status_enum NOT NULL DEFAULT 'PENDING',
+  status text NOT NULL DEFAULT 'PENDING',
   created_by_id uuid REFERENCES users(id) ON DELETE SET NULL
 );
 

@@ -47,4 +47,11 @@ public class PurchaseOrderController {
     public PurchaseOrderResponse receive(@PathVariable UUID id) {
         return purchaseOrderService.receive(id);
     }
+
+    @PostMapping("/{id}/cancel")
+    public PurchaseOrderResponse cancel(@PathVariable UUID id) {
+        return purchaseOrderService.cancel(id);
+    }
+
+
 }

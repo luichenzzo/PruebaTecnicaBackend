@@ -25,6 +25,7 @@ public class InventoryMovement extends BaseEntity {
     private Inventory inventory;
 
     @Enumerated(EnumType.STRING)
+    // Persist as string in the DB (column is text/varchar). Do not force a DB enum type here.
     @Column(name = "movement_type", nullable = false)
     private MovementType movementType;
 
