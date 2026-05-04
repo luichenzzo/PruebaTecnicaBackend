@@ -27,11 +27,10 @@ public class SaleController {
     }
 
 
-    //TODO: Right now, operator has access to all sales, should only have access to his own branch.
     @GetMapping
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
-    public List<SaleResponse> findAll() {
-        return saleService.findAll();
+    public List<SaleResponse> findAll(@org.springframework.web.bind.annotation.RequestParam(required = false) UUID branchId) {
+        return saleService.findAll(branchId);
     }
 
     @GetMapping("/{id}")
@@ -45,5 +44,11 @@ public class SaleController {
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
     public SaleResponse create(@Valid @RequestBody SaleRequest request) {
         return saleService.create(request);
+    }
+
+    @PostMapping("/{id}/cancel")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    public SaleResponse cancel(@PathVariable UUID id) {
+        return saleService.cancel(id);
     }
 }

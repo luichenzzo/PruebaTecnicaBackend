@@ -51,6 +51,13 @@ public class SaleService {
         return saleRepository.findAll().stream().map(SaleResponse::from).toList();
     }
 
+    public List<SaleResponse> findAll(UUID branchId) {
+        if (branchId == null) {
+            return findAll();
+        }
+        return saleRepository.findByBranchId(branchId).stream().map(SaleResponse::from).toList();
+    }
+
     public SaleResponse findById(UUID id) {
         return SaleResponse.from(getSale(id));
     }
@@ -107,5 +114,36 @@ public class SaleService {
     private Sale getSale(UUID id) {
         return saleRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Sale not found"));
+    }
+
+    @Transactional
+    public SaleResponse cancel(UUID id) {
+        currentUserService.getAuthenticatedUser();
+        Sale sale = getSale(id);
+
+        if (sale.getStatus() == SaleStatus.CANCELLED) {
+            throw new BadRequestException("Sale is already cancelled");
+        }
+
+        if (sale.getStatus() != SaleStatus.COMPLETED) {
+            throw new BadRequestException("Only completed sales can be cancelled");
+        }
+
+        // Reverse inventory for each item (restore stock)
+        for (SaleItem item : sale.getItems()) {
+            inventoryService.increaseStock(
+                    item.getProduct().getId(),
+                    sale.getBranch().getId(),
+                    item.getQuantity(),
+                    MovementType.ADJUSTMENT,
+                    sale.getSaleNumber(),
+                    "Sale cancelled",
+                    "SALE",
+                    sale.getId().toString()
+            );
+        }
+
+        sale.setStatus(SaleStatus.CANCELLED);
+        return SaleResponse.from(saleRepository.save(sale));
     }
 }

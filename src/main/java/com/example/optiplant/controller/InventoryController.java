@@ -31,6 +31,12 @@ public class InventoryController {
         return inventoryService.findAll(branchId);
     }
 
+    @GetMapping("/branch/{branchId}")
+    @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
+    public List<InventoryResponse> findByBranch(@PathVariable UUID branchId) {
+        return inventoryService.findAll(branchId);
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
     public InventoryResponse findById(@PathVariable UUID id) {
