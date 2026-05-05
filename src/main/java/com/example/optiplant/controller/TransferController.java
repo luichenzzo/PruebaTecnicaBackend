@@ -32,6 +32,16 @@ public class TransferController {
         return transferService.findAll();
     }
 
+    @GetMapping("/from/{branchId}")
+    public List<TransferResponse> findByFromBranch(@PathVariable UUID branchId) {
+        return transferService.findByFromBranchId(branchId);
+    }
+
+    @GetMapping("/to/{branchId}")
+    public List<TransferResponse> findByToBranch(@PathVariable UUID branchId) {
+        return transferService.findByToBranchId(branchId);
+    }
+
     @GetMapping("/{id}")
     public TransferResponse findById(@PathVariable UUID id) {
         return transferService.findById(id);

@@ -50,6 +50,14 @@ public class TransferService {
         return transferRepository.findAll().stream().map(TransferResponse::from).toList();
     }
 
+    public List<TransferResponse> findByFromBranchId(UUID branchId) {
+        return transferRepository.findByFromBranchId(branchId).stream().map(TransferResponse::from).toList();
+    }
+
+    public List<TransferResponse> findByToBranchId(UUID branchId) {
+        return transferRepository.findByToBranchId(branchId).stream().map(TransferResponse::from).toList();
+    }
+
     public TransferResponse findById(UUID id) {
         return TransferResponse.from(getTransfer(id));
     }
