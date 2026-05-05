@@ -7,6 +7,8 @@ import com.example.optiplant.dto.UserResponse;
 import com.example.optiplant.services.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,5 +41,11 @@ public class AuthController {
     @GetMapping({"/me", "/verify"})
     public UserResponse currentUser(Authentication authentication) {
         return authService.getCurrentUser(authentication.getName());
+    }
+
+    @GetMapping("/users")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    public List<UserResponse> findAllUsers() {
+        return authService.findAll();
     }
 }

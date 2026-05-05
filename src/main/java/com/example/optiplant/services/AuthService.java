@@ -91,4 +91,8 @@ public class AuthService {
                 .orElseThrow(() -> new NotFoundException("User not found"));
         return UserResponse.from(user);
     }
+
+    public java.util.List<UserResponse> findAll() {
+        return userRepository.findAll().stream().map(UserResponse::from).toList();
+    }
 }
