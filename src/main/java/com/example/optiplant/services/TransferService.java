@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Service
 public class TransferService {
@@ -31,19 +32,22 @@ public class TransferService {
     private final ProductRepository productRepository;
     private final CurrentUserService currentUserService;
     private final InventoryService inventoryService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public TransferService(
             TransferRepository transferRepository,
             BranchRepository branchRepository,
             ProductRepository productRepository,
             CurrentUserService currentUserService,
-            InventoryService inventoryService
+            InventoryService inventoryService,
+            SimpMessagingTemplate messagingTemplate
     ) {
         this.transferRepository = transferRepository;
         this.branchRepository = branchRepository;
         this.productRepository = productRepository;
         this.currentUserService = currentUserService;
         this.inventoryService = inventoryService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public List<TransferResponse> findAll() {
@@ -99,7 +103,14 @@ public class TransferService {
             transfer.getItems().add(transferItem);
         }
 
-        return TransferResponse.from(transferRepository.save(transfer));
+        Transfer saved = transferRepository.save(transfer);
+        try {
+            if (messagingTemplate != null) {
+                messagingTemplate.convertAndSend("/topic/transfers", TransferResponse.from(saved));
+            }
+        } catch (Exception ignored) {
+        }
+        return TransferResponse.from(saved);
     }
 
     @Transactional
@@ -125,7 +136,14 @@ public class TransferService {
         }
 
         transfer.setStatus(TransferStatus.IN_TRANSIT);
-        return TransferResponse.from(transferRepository.save(transfer));
+        Transfer saved = transferRepository.save(transfer);
+        try {
+            if (messagingTemplate != null) {
+                messagingTemplate.convertAndSend("/topic/transfers", TransferResponse.from(saved));
+            }
+        } catch (Exception ignored) {
+        }
+        return TransferResponse.from(saved);
     }
 
     @Transactional
@@ -151,7 +169,14 @@ public class TransferService {
         }
 
         transfer.setStatus(TransferStatus.COMPLETED);
-        return TransferResponse.from(transferRepository.save(transfer));
+        Transfer saved = transferRepository.save(transfer);
+        try {
+            if (messagingTemplate != null) {
+                messagingTemplate.convertAndSend("/topic/transfers", TransferResponse.from(saved));
+            }
+        } catch (Exception ignored) {
+        }
+        return TransferResponse.from(saved);
     }
 
     private Transfer getTransfer(UUID id) {

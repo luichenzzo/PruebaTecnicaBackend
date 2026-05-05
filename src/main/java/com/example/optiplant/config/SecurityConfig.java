@@ -62,6 +62,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/reports/**").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers("/api/sales/**").hasAnyRole("OPERATOR", "MANAGER", "ADMIN")
                         .requestMatchers("/api/transfers/**").hasAnyRole("MANAGER", "ADMIN")
+                        // Allow WebSocket handshake endpoints and topic subscriptions
+                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/topic/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Service
 public class InventoryService {
@@ -27,19 +28,22 @@ public class InventoryService {
     private final ProductRepository productRepository;
     private final BranchRepository branchRepository;
     private final CurrentUserService currentUserService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public InventoryService(
             InventoryRepository inventoryRepository,
             InventoryMovementRepository movementRepository,
             ProductRepository productRepository,
             BranchRepository branchRepository,
-            CurrentUserService currentUserService
+            CurrentUserService currentUserService,
+            SimpMessagingTemplate messagingTemplate
     ) {
         this.inventoryRepository = inventoryRepository;
         this.movementRepository = movementRepository;
         this.productRepository = productRepository;
         this.branchRepository = branchRepository;
         this.currentUserService = currentUserService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public List<InventoryResponse> findAll(UUID branchId) {
@@ -140,6 +144,14 @@ public class InventoryService {
         movement.setSourceType(sourceType);
         movement.setSourceId(sourceId);
         movementRepository.save(movement);
+        // Broadcast inventory update to subscribed clients
+        try {
+            if (messagingTemplate != null) {
+                messagingTemplate.convertAndSend("/topic/inventory", com.example.optiplant.dto.InventoryResponse.from(inventory));
+            }
+        } catch (Exception ignored) {
+            // Do not fail the transaction if messaging fails
+        }
     }
 
     Inventory getInventory(UUID id) {
