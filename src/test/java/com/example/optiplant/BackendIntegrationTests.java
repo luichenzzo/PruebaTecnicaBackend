@@ -229,6 +229,93 @@ class BackendIntegrationTests {
         assertThat(toInventory.getQuantity()).isEqualByComparingTo("4");
     }
 
+    @Test
+    void createCompletedTransferMovesStockBetweenBranches() throws Exception {
+        Inventory originInventory = new Inventory();
+        originInventory.setProduct(product);
+        originInventory.setBranch(mainBranch);
+        originInventory.setQuantity(new BigDecimal("10"));
+        originInventory.setReserved(BigDecimal.ZERO);
+        inventoryRepository.save(originInventory);
+
+        String managerToken = registerRoleAwareUser("manager3", "manager3@example.com", mainBranch.getId());
+        promoteUserToManager("manager3");
+        managerToken = login("manager3", "password123");
+
+        mockMvc.perform(post("/api/transfers/complete")
+                        .header("Authorization", "Bearer " + managerToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "transferNumber": "TRF-TEST-002",
+                                  "fromBranchId": "%s",
+                                  "toBranchId": "%s",
+                                  "items": [
+                                    {
+                                      "productId": "%s",
+                                      "quantity": 4
+                                    }
+                                  ]
+                                }
+                                """.formatted(mainBranch.getId(), secondaryBranch.getId(), product.getId())))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("COMPLETED"));
+
+        Inventory fromInventory = inventoryRepository.findByProductIdAndBranchId(product.getId(), mainBranch.getId()).orElseThrow();
+        Inventory toInventory = inventoryRepository.findByProductIdAndBranchId(product.getId(), secondaryBranch.getId()).orElseThrow();
+        assertThat(fromInventory.getQuantity()).isEqualByComparingTo("6");
+        assertThat(toInventory.getQuantity()).isEqualByComparingTo("4");
+    }
+
+    @Test
+    void cancelInTransitTransferRestoresOriginStock() throws Exception {
+        Inventory originInventory = new Inventory();
+        originInventory.setProduct(product);
+        originInventory.setBranch(mainBranch);
+        originInventory.setQuantity(new BigDecimal("10"));
+        originInventory.setReserved(BigDecimal.ZERO);
+        inventoryRepository.save(originInventory);
+
+        String managerToken = registerRoleAwareUser("manager4", "manager4@example.com", mainBranch.getId());
+        promoteUserToManager("manager4");
+        managerToken = login("manager4", "password123");
+
+        MvcResult transferResult = mockMvc.perform(post("/api/transfers")
+                        .header("Authorization", "Bearer " + managerToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "transferNumber": "TRF-TEST-003",
+                                  "fromBranchId": "%s",
+                                  "toBranchId": "%s",
+                                  "items": [
+                                    {
+                                      "productId": "%s",
+                                      "quantity": 4
+                                    }
+                                  ]
+                                }
+                                """.formatted(mainBranch.getId(), secondaryBranch.getId(), product.getId())))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        String transferId = readJson(transferResult).get("id").asText();
+
+        mockMvc.perform(post("/api/transfers/" + transferId + "/approve")
+                        .header("Authorization", "Bearer " + managerToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("IN_TRANSIT"));
+
+        mockMvc.perform(post("/api/transfers/" + transferId + "/cancel")
+                        .header("Authorization", "Bearer " + managerToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("CANCELLED"));
+
+        Inventory fromInventory = inventoryRepository.findByProductIdAndBranchId(product.getId(), mainBranch.getId()).orElseThrow();
+        assertThat(fromInventory.getQuantity()).isEqualByComparingTo("10");
+        assertThat(inventoryRepository.findByProductIdAndBranchId(product.getId(), secondaryBranch.getId())).isEmpty();
+    }
+
     private String registerRoleAwareUser(String username, String email, java.util.UUID branchId) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)

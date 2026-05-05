@@ -1,15 +1,20 @@
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\config\JpaAuditingConfig.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\config\SecurityConfig.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\config\WebSocketConfig.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\controller\AuthController.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\controller\BranchController.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\controller\InventoryController.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\controller\InventoryMovementController.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\controller\ProductController.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\controller\PurchaseOrderController.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\controller\ReportController.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\controller\SaleController.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\controller\SupplierController.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\controller\TransferController.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\ApiErrorResponse.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\AuthResponse.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\BranchRequest.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\BranchResponse.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\InventoryAdjustmentRequest.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\InventoryMovementResponse.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\InventoryResponse.java
@@ -26,6 +31,7 @@ C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\ja
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\SaleItemResponse.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\SaleRequest.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\SaleResponse.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\SupplierResponse.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\TransferItemResponse.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\TransferRequest.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\TransferResponse.java
@@ -69,6 +75,7 @@ C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\ja
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\security\JwtAuthenticationFilter.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\security\JwtService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\AuthService.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\BranchService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\CurrentUserService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\InventoryMovementService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\InventoryService.java
@@ -76,4 +83,8 @@ C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\ja
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\PurchaseOrderService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\ReportService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\SaleService.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\SupplierService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\TransferService.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\sse\SseController.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\sse\SseService.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\websocket\WebSocketMessageController.java

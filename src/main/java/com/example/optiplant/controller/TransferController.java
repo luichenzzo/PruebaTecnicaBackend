@@ -53,6 +53,12 @@ public class TransferController {
         return transferService.create(request);
     }
 
+    @PostMapping("/complete")
+    @ResponseStatus(HttpStatus.CREATED)
+    public TransferResponse createCompleted(@Valid @RequestBody TransferRequest request) {
+        return transferService.createCompleted(request);
+    }
+
     @PostMapping("/{id}/approve")
     public TransferResponse approve(@PathVariable UUID id) {
         return transferService.approve(id);
@@ -61,5 +67,10 @@ public class TransferController {
     @PostMapping("/{id}/complete")
     public TransferResponse complete(@PathVariable UUID id) {
         return transferService.complete(id);
+    }
+
+    @PostMapping("/{id}/cancel")
+    public TransferResponse cancel(@PathVariable UUID id) {
+        return transferService.cancel(id);
     }
 }

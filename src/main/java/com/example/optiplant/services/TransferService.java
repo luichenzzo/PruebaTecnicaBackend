@@ -69,7 +69,83 @@ public class TransferService {
     @Transactional
     public TransferResponse create(TransferRequest request) {
         currentUserService.getAuthenticatedUser();
+        Transfer saved = transferRepository.save(buildTransfer(request));
+        publishTransfer(saved);
+        return TransferResponse.from(saved);
+    }
 
+    @Transactional
+    public TransferResponse createCompleted(TransferRequest request) {
+        currentUserService.getAuthenticatedUser();
+        Transfer transfer = transferRepository.save(buildTransfer(request));
+
+        registerTransferOut(transfer, "Transfer completed");
+        registerTransferIn(transfer, "Transfer completed");
+
+        transfer.setStatus(TransferStatus.COMPLETED);
+        Transfer saved = transferRepository.save(transfer);
+        publishTransfer(saved);
+        return TransferResponse.from(saved);
+    }
+
+    @Transactional
+    public TransferResponse approve(UUID id) {
+        currentUserService.getAuthenticatedUser();
+        Transfer transfer = getTransfer(id);
+
+        if (transfer.getStatus() != TransferStatus.PENDING) {
+            throw new BadRequestException("Only pending transfers can be approved");
+        }
+
+        registerTransferOut(transfer, "Transfer approved");
+
+        transfer.setStatus(TransferStatus.IN_TRANSIT);
+        Transfer saved = transferRepository.save(transfer);
+        publishTransfer(saved);
+        return TransferResponse.from(saved);
+    }
+
+    @Transactional
+    public TransferResponse complete(UUID id) {
+        currentUserService.getAuthenticatedUser();
+        Transfer transfer = getTransfer(id);
+
+        if (transfer.getStatus() != TransferStatus.IN_TRANSIT) {
+            throw new BadRequestException("Only in-transit transfers can be completed");
+        }
+
+        registerTransferIn(transfer, "Transfer completed");
+
+        transfer.setStatus(TransferStatus.COMPLETED);
+        Transfer saved = transferRepository.save(transfer);
+        publishTransfer(saved);
+        return TransferResponse.from(saved);
+    }
+
+    @Transactional
+    public TransferResponse cancel(UUID id) {
+        currentUserService.getAuthenticatedUser();
+        Transfer transfer = getTransfer(id);
+
+        if (transfer.getStatus() == TransferStatus.CANCELLED) {
+            throw new BadRequestException("Transfer is already cancelled");
+        }
+
+        if (transfer.getStatus() == TransferStatus.COMPLETED) {
+            throw new BadRequestException("Completed transfers cannot be cancelled");
+        }
+
+        if (transfer.getStatus() == TransferStatus.IN_TRANSIT) {
+            restoreTransferOut(transfer);
+        }
+
+        transfer.setStatus(TransferStatus.CANCELLED);
+        Transfer saved = transferRepository.save(transfer);
+        publishTransfer(saved);
+        return TransferResponse.from(saved);
+    }
+
+    private Transfer buildTransfer(TransferRequest request) {
         if (request.fromBranchId().equals(request.toBranchId())) {
             throw new BadRequestException("Origin and destination branches must be different");
         }
@@ -103,25 +179,10 @@ public class TransferService {
             transfer.getItems().add(transferItem);
         }
 
-        Transfer saved = transferRepository.save(transfer);
-        try {
-            if (messagingTemplate != null) {
-                messagingTemplate.convertAndSend("/topic/transfers", TransferResponse.from(saved));
-            }
-        } catch (Exception ignored) {
-        }
-        return TransferResponse.from(saved);
+        return transfer;
     }
 
-    @Transactional
-    public TransferResponse approve(UUID id) {
-        currentUserService.getAuthenticatedUser();
-        Transfer transfer = getTransfer(id);
-
-        if (transfer.getStatus() != TransferStatus.PENDING) {
-            throw new BadRequestException("Only pending transfers can be approved");
-        }
-
+    private void registerTransferOut(Transfer transfer, String notes) {
         for (TransferItem item : transfer.getItems()) {
             inventoryService.decreaseStock(
                     item.getProduct().getId(),
@@ -129,32 +190,14 @@ public class TransferService {
                     item.getQuantity(),
                     MovementType.TRANSFER_OUT,
                     transfer.getTransferNumber(),
-                    "Transfer approved",
+                    notes,
                     "TRANSFER",
                     transfer.getId().toString()
             );
         }
-
-        transfer.setStatus(TransferStatus.IN_TRANSIT);
-        Transfer saved = transferRepository.save(transfer);
-        try {
-            if (messagingTemplate != null) {
-                messagingTemplate.convertAndSend("/topic/transfers", TransferResponse.from(saved));
-            }
-        } catch (Exception ignored) {
-        }
-        return TransferResponse.from(saved);
     }
 
-    @Transactional
-    public TransferResponse complete(UUID id) {
-        currentUserService.getAuthenticatedUser();
-        Transfer transfer = getTransfer(id);
-
-        if (transfer.getStatus() != TransferStatus.IN_TRANSIT) {
-            throw new BadRequestException("Only in-transit transfers can be completed");
-        }
-
+    private void registerTransferIn(Transfer transfer, String notes) {
         for (TransferItem item : transfer.getItems()) {
             inventoryService.increaseStock(
                     item.getProduct().getId(),
@@ -162,21 +205,35 @@ public class TransferService {
                     item.getQuantity(),
                     MovementType.TRANSFER_IN,
                     transfer.getTransferNumber(),
-                    "Transfer completed",
+                    notes,
                     "TRANSFER",
                     transfer.getId().toString()
             );
         }
+    }
 
-        transfer.setStatus(TransferStatus.COMPLETED);
-        Transfer saved = transferRepository.save(transfer);
+    private void restoreTransferOut(Transfer transfer) {
+        for (TransferItem item : transfer.getItems()) {
+            inventoryService.increaseStock(
+                    item.getProduct().getId(),
+                    transfer.getFromBranch().getId(),
+                    item.getQuantity(),
+                    MovementType.ADJUSTMENT,
+                    transfer.getTransferNumber(),
+                    "Transfer cancelled",
+                    "TRANSFER",
+                    transfer.getId().toString()
+            );
+        }
+    }
+
+    private void publishTransfer(Transfer transfer) {
         try {
             if (messagingTemplate != null) {
-                messagingTemplate.convertAndSend("/topic/transfers", TransferResponse.from(saved));
+                messagingTemplate.convertAndSend("/topic/transfers", TransferResponse.from(transfer));
             }
         } catch (Exception ignored) {
         }
-        return TransferResponse.from(saved);
     }
 
     private Transfer getTransfer(UUID id) {
