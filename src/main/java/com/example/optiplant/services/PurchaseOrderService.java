@@ -35,6 +35,7 @@ public class PurchaseOrderService {
     private final ProductRepository productRepository;
     private final InventoryService inventoryService;
     private final CurrentUserService currentUserService;
+    private final RealtimeNotificationService realtimeNotificationService;
 
     public PurchaseOrderService(
             PurchaseOrderRepository purchaseOrderRepository,
@@ -42,7 +43,8 @@ public class PurchaseOrderService {
             BranchRepository branchRepository,
             ProductRepository productRepository,
             InventoryService inventoryService,
-            CurrentUserService currentUserService
+            CurrentUserService currentUserService,
+            RealtimeNotificationService realtimeNotificationService
     ) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.supplierRepository = supplierRepository;
@@ -50,6 +52,7 @@ public class PurchaseOrderService {
         this.productRepository = productRepository;
         this.inventoryService = inventoryService;
         this.currentUserService = currentUserService;
+        this.realtimeNotificationService = realtimeNotificationService;
     }
 
     public List<PurchaseOrderResponse> findAll() {
@@ -99,7 +102,9 @@ public class PurchaseOrderService {
         }
 
         order.setTotal(total);
-        return PurchaseOrderResponse.from(purchaseOrderRepository.save(order));
+        PurchaseOrderResponse response = PurchaseOrderResponse.from(purchaseOrderRepository.save(order));
+        realtimeNotificationService.purchaseOrderCreated(response);
+        return response;
     }
 
     @Transactional
@@ -129,7 +134,9 @@ public class PurchaseOrderService {
         }
 
         order.setStatus(OrderStatus.RECEIVED);
-        return PurchaseOrderResponse.from(purchaseOrderRepository.save(order));
+        PurchaseOrderResponse response = PurchaseOrderResponse.from(purchaseOrderRepository.save(order));
+        realtimeNotificationService.purchaseOrderUpdated(response);
+        return response;
     }
 
     @Transactional
@@ -146,7 +153,9 @@ public class PurchaseOrderService {
         }
 
         order.setStatus(OrderStatus.CANCELLED);
-        return PurchaseOrderResponse.from(purchaseOrderRepository.save(order));
+        PurchaseOrderResponse response = PurchaseOrderResponse.from(purchaseOrderRepository.save(order));
+        realtimeNotificationService.purchaseOrderUpdated(response);
+        return response;
     }
 
     private PurchaseOrder getOrder(UUID id) {

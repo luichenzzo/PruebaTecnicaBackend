@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Service
 public class InventoryService {
@@ -28,7 +27,7 @@ public class InventoryService {
     private final ProductRepository productRepository;
     private final BranchRepository branchRepository;
     private final CurrentUserService currentUserService;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final RealtimeNotificationService realtimeNotificationService;
 
     public InventoryService(
             InventoryRepository inventoryRepository,
@@ -36,14 +35,14 @@ public class InventoryService {
             ProductRepository productRepository,
             BranchRepository branchRepository,
             CurrentUserService currentUserService,
-            SimpMessagingTemplate messagingTemplate
+            RealtimeNotificationService realtimeNotificationService
     ) {
         this.inventoryRepository = inventoryRepository;
         this.movementRepository = movementRepository;
         this.productRepository = productRepository;
         this.branchRepository = branchRepository;
         this.currentUserService = currentUserService;
-        this.messagingTemplate = messagingTemplate;
+        this.realtimeNotificationService = realtimeNotificationService;
     }
 
     public List<InventoryResponse> findAll(UUID branchId) {
@@ -143,15 +142,9 @@ public class InventoryService {
         movement.setNotes(notes);
         movement.setSourceType(sourceType);
         movement.setSourceId(sourceId);
-        movementRepository.save(movement);
-        // Broadcast inventory update to subscribed clients
-        try {
-            if (messagingTemplate != null) {
-                messagingTemplate.convertAndSend("/topic/inventory", com.example.optiplant.dto.InventoryResponse.from(inventory));
-            }
-        } catch (Exception ignored) {
-            // Do not fail the transaction if messaging fails
-        }
+        InventoryMovement savedMovement = movementRepository.save(movement);
+        realtimeNotificationService.inventoryMovementCreated(com.example.optiplant.dto.InventoryMovementResponse.from(savedMovement));
+        realtimeNotificationService.inventoryUpdated(com.example.optiplant.dto.InventoryResponse.from(inventory));
     }
 
     Inventory getInventory(UUID id) {

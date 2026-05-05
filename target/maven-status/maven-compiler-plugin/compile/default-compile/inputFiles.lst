@@ -26,6 +26,7 @@ C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\ja
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\PurchaseOrderItemResponse.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\PurchaseOrderRequest.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\PurchaseOrderResponse.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\RealtimeEvent.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\RegisterRequest.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\ReportOverviewResponse.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\dto\SaleItemResponse.java
@@ -81,6 +82,7 @@ C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\ja
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\InventoryService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\ProductService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\PurchaseOrderService.java
+C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\RealtimeNotificationService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\ReportService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\SaleService.java
 C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend\src\main\java\com\example\optiplant\services\SupplierService.java

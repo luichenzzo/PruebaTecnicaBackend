@@ -20,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Service
 public class TransferService {
@@ -32,7 +31,7 @@ public class TransferService {
     private final ProductRepository productRepository;
     private final CurrentUserService currentUserService;
     private final InventoryService inventoryService;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final RealtimeNotificationService realtimeNotificationService;
 
     public TransferService(
             TransferRepository transferRepository,
@@ -40,14 +39,14 @@ public class TransferService {
             ProductRepository productRepository,
             CurrentUserService currentUserService,
             InventoryService inventoryService,
-            SimpMessagingTemplate messagingTemplate
+            RealtimeNotificationService realtimeNotificationService
     ) {
         this.transferRepository = transferRepository;
         this.branchRepository = branchRepository;
         this.productRepository = productRepository;
         this.currentUserService = currentUserService;
         this.inventoryService = inventoryService;
-        this.messagingTemplate = messagingTemplate;
+        this.realtimeNotificationService = realtimeNotificationService;
     }
 
     public List<TransferResponse> findAll() {
@@ -228,12 +227,7 @@ public class TransferService {
     }
 
     private void publishTransfer(Transfer transfer) {
-        try {
-            if (messagingTemplate != null) {
-                messagingTemplate.convertAndSend("/topic/transfers", TransferResponse.from(transfer));
-            }
-        } catch (Exception ignored) {
-        }
+        realtimeNotificationService.transferUpdated(TransferResponse.from(transfer));
     }
 
     private Transfer getTransfer(UUID id) {

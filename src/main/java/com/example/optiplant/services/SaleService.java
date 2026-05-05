@@ -32,19 +32,22 @@ public class SaleService {
     private final ProductRepository productRepository;
     private final CurrentUserService currentUserService;
     private final InventoryService inventoryService;
+    private final RealtimeNotificationService realtimeNotificationService;
 
     public SaleService(
             SaleRepository saleRepository,
             BranchRepository branchRepository,
             ProductRepository productRepository,
             CurrentUserService currentUserService,
-            InventoryService inventoryService
+            InventoryService inventoryService,
+            RealtimeNotificationService realtimeNotificationService
     ) {
         this.saleRepository = saleRepository;
         this.branchRepository = branchRepository;
         this.productRepository = productRepository;
         this.currentUserService = currentUserService;
         this.inventoryService = inventoryService;
+        this.realtimeNotificationService = realtimeNotificationService;
     }
 
     public List<SaleResponse> findAll() {
@@ -108,7 +111,9 @@ public class SaleService {
         }
 
         sale.setTotal(total);
-        return SaleResponse.from(saleRepository.save(sale));
+        SaleResponse response = SaleResponse.from(saleRepository.save(sale));
+        realtimeNotificationService.saleCreated(response);
+        return response;
     }
 
     private Sale getSale(UUID id) {
@@ -144,6 +149,8 @@ public class SaleService {
         }
 
         sale.setStatus(SaleStatus.CANCELLED);
-        return SaleResponse.from(saleRepository.save(sale));
+        SaleResponse response = SaleResponse.from(saleRepository.save(sale));
+        realtimeNotificationService.saleUpdated(response);
+        return response;
     }
 }

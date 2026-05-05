@@ -18,10 +18,16 @@ public class BranchService {
 
     private final BranchRepository branchRepository;
     private final CurrentUserService currentUserService;
+    private final RealtimeNotificationService realtimeNotificationService;
 
-    public BranchService(BranchRepository branchRepository, CurrentUserService currentUserService) {
+    public BranchService(
+            BranchRepository branchRepository,
+            CurrentUserService currentUserService,
+            RealtimeNotificationService realtimeNotificationService
+    ) {
         this.branchRepository = branchRepository;
         this.currentUserService = currentUserService;
+        this.realtimeNotificationService = realtimeNotificationService;
     }
 
     public List<BranchResponse> findAll() {
@@ -43,7 +49,9 @@ public class BranchService {
         branch.setName(request.name().trim());
         branch.setAddress(request.address() == null ? null : request.address().trim());
 
-        return BranchResponse.from(branchRepository.save(branch));
+        BranchResponse response = BranchResponse.from(branchRepository.save(branch));
+        realtimeNotificationService.branchCreated(response);
+        return response;
     }
 
     @Transactional
@@ -58,7 +66,9 @@ public class BranchService {
         branch.setName(request.name().trim());
         branch.setAddress(request.address() == null ? null : request.address().trim());
 
-        return BranchResponse.from(branchRepository.save(branch));
+        BranchResponse response = BranchResponse.from(branchRepository.save(branch));
+        realtimeNotificationService.branchUpdated(response);
+        return response;
     }
 
     @Transactional
@@ -70,6 +80,7 @@ public class BranchService {
 
         Branch branch = getBranch(id);
         branchRepository.delete(branch);
+        realtimeNotificationService.branchDeleted(id);
     }
 
     private Branch getBranch(UUID id) {

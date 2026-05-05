@@ -19,15 +19,18 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UnitOfMeasureRepository unitOfMeasureRepository;
     private final SupplierRepository supplierRepository;
+    private final RealtimeNotificationService realtimeNotificationService;
 
     public ProductService(
             ProductRepository productRepository,
             UnitOfMeasureRepository unitOfMeasureRepository,
-            SupplierRepository supplierRepository
+            SupplierRepository supplierRepository,
+            RealtimeNotificationService realtimeNotificationService
     ) {
         this.productRepository = productRepository;
         this.unitOfMeasureRepository = unitOfMeasureRepository;
         this.supplierRepository = supplierRepository;
+        this.realtimeNotificationService = realtimeNotificationService;
     }
 
     public List<ProductResponse> findAll() {
@@ -47,7 +50,9 @@ public class ProductService {
 
         Product product = new Product();
         apply(product, request);
-        return ProductResponse.from(productRepository.save(product));
+        ProductResponse response = ProductResponse.from(productRepository.save(product));
+        realtimeNotificationService.productCreated(response);
+        return response;
     }
 
     @Transactional
@@ -61,12 +66,15 @@ public class ProductService {
                 });
 
         apply(product, request);
-        return ProductResponse.from(productRepository.save(product));
+        ProductResponse response = ProductResponse.from(productRepository.save(product));
+        realtimeNotificationService.productUpdated(response);
+        return response;
     }
 
     @Transactional
     public void delete(UUID id) {
         productRepository.delete(getProduct(id));
+        realtimeNotificationService.productDeleted(id);
     }
 
     Product getProduct(UUID id) {

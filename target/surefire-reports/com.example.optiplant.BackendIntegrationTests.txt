@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.example.optiplant.BackendIntegrationTests
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 24.64 s -- in com.example.optiplant.BackendIntegrationTests
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 24.65 s -- in com.example.optiplant.BackendIntegrationTests
