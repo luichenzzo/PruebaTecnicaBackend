@@ -6,11 +6,13 @@ services:
       POSTGRES_DB: optiplant
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
     volumes:
-      - optiplant-db-data:/var/lib/postgresql/data
-      - ./docker/initdb/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./Database.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d optiplant"]
       interval: 10s
@@ -37,6 +39,3 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
-
-volumes:
-  optiplant-db-data:
