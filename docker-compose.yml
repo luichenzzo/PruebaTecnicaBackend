@@ -1,23 +1,42 @@
-version: '3.8'
-
-# Note: The Postgres database is intentionally not included here.
-# This compose file only brings up pgAdmin for database administration.
-# Run your Postgres instance in a dedicated compose/project or a managed service,
-# and point pgAdmin (or your application) to that database.
-
 services:
-  pgadmin:
-    image: dpage/pgadmin4:7
-    container_name: optiplant-pgadmin
+  optiplant-db:
+    image: postgres:18
+    container_name: optiplant-db
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@local.test
-      PGADMIN_DEFAULT_PASSWORD: ChangeMe!
+      POSTGRES_DB: optiplant
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
     ports:
-      - '8080:80'
+      - "5432:5432"
     volumes:
-      - pgadmin-data:/var/lib/pgadmin
+      - optiplant-db-data:/var/lib/postgresql/data
+      - ./docker/initdb/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d optiplant"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  optiplant-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: optiplant-api:latest
+    container_name: optiplant-api
+    depends_on:
+      optiplant-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://optiplant-db:5432/optiplant
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+      JWT_SECRET: change-this-secret-to-a-long-random-value-with-at-least-32-characters
+      JWT_EXPIRATION_MS: 86400000
+      CORS_ALLOWED_ORIGINS: http://localhost:3000
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
 
 volumes:
-  pgadmin-data:
-
-
+  optiplant-db-data:

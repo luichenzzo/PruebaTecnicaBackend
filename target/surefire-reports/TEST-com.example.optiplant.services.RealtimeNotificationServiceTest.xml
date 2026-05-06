@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.example.optiplant.OptiplantApplicationTests" time="2.034" tests="1" errors="0" skipped="0" failures="0" flakes="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.702" tests="26" errors="0" skipped="0" failures="0" flakes="0">
   <properties>
     <property name="java.specification.version" value="26"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -74,56 +74,30 @@
     <property name="java.class.version" value="70.0"/>
     <property name="LOGGED_APPLICATION_NAME" value="[Optiplant] "/>
   </properties>
-  <testcase name="contextLoads" classname="com.example.optiplant.OptiplantApplicationTests" time="0.005">
-    <system-out><![CDATA[2026-05-05T20:09:29.275-05:00  INFO 26760 --- [Optiplant] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.example.optiplant.OptiplantApplicationTests]: OptiplantApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2026-05-05T20:09:29.277-05:00  INFO 26760 --- [Optiplant] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.example.optiplant.OptiplantApplication for test class com.example.optiplant.OptiplantApplicationTests
-2026-05-05T20:09:29.280-05:00  INFO 26760 --- [Optiplant] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.example.optiplant.OptiplantApplicationTests]: OptiplantApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2026-05-05T20:09:29.283-05:00  INFO 26760 --- [Optiplant] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.example.optiplant.OptiplantApplication for test class com.example.optiplant.OptiplantApplicationTests
-2026-05-05T20:09:29.288-05:00  INFO 26760 --- [Optiplant] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Stopping...
-2026-05-05T20:09:29.290-05:00  INFO 26760 --- [Optiplant] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@24c036b7]]
-2026-05-05T20:09:29.290-05:00  INFO 26760 --- [Optiplant] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Stopped.
-2026-05-05T20:09:29.295-05:00  INFO 26760 --- [Optiplant] [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
-
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
-
- :: Spring Boot ::                (v4.0.6)
-
-2026-05-05T20:09:29.346-05:00  INFO 26760 --- [Optiplant] [           main] c.e.optiplant.OptiplantApplicationTests  : Starting OptiplantApplicationTests using Java 26.0.1 with PID 26760 (started by Luich in C:\Users\Luich\Desktop\Optiplant\Back\Optiplant\PruebaTecnicaBackend)
-2026-05-05T20:09:29.346-05:00  INFO 26760 --- [Optiplant] [           main] c.e.optiplant.OptiplantApplicationTests  : No active profile set, falling back to 1 default profile: "default"
-2026-05-05T20:09:29.939-05:00  INFO 26760 --- [Optiplant] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-05-05T20:09:29.986-05:00  INFO 26760 --- [Optiplant] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 45 ms. Found 10 JPA repository interfaces.
-2026-05-05T20:09:30.141-05:00  INFO 26760 --- [Optiplant] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-05-05T20:09:30.178-05:00  INFO 26760 --- [Optiplant] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-05-05T20:09:30.180-05:00  INFO 26760 --- [Optiplant] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
-2026-05-05T20:09:30.255-05:00  INFO 26760 --- [Optiplant] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@3aa1669a
-2026-05-05T20:09:30.255-05:00  INFO 26760 --- [Optiplant] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
-2026-05-05T20:09:30.265-05:00  WARN 26760 --- [Optiplant] [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-05T20:09:30.273-05:00  INFO 26760 --- [Optiplant] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [jdbc:postgresql://localhost:5432/optiplant]
-	Database driver: PostgreSQL JDBC Driver
-	Database dialect: PostgreSQLDialect
-	Database version: 18.3
-	Default catalog/schema: optiplant/public
-	Autocommit mode: undefined/unknown
-	Isolation level: READ_COMMITTED [default READ_COMMITTED]
-	JDBC fetch size: none
-	Pool: DataSourceConnectionProvider
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-05-05T20:09:30.610-05:00  INFO 26760 --- [Optiplant] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-05-05T20:09:30.611-05:00  INFO 26760 --- [Optiplant] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-05-05T20:09:30.718-05:00  INFO 26760 --- [Optiplant] [           main] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
-2026-05-05T20:09:30.719-05:00  WARN 26760 --- [Optiplant] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
-2026-05-05T20:09:30.955-05:00  WARN 26760 --- [Optiplant] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-05-05T20:09:31.292-05:00  INFO 26760 --- [Optiplant] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Starting...
-2026-05-05T20:09:31.292-05:00  INFO 26760 --- [Optiplant] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@62f5d080]]
-2026-05-05T20:09:31.292-05:00  INFO 26760 --- [Optiplant] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Started.
-2026-05-05T20:09:31.296-05:00  INFO 26760 --- [Optiplant] [           main] c.e.optiplant.OptiplantApplicationTests  : Started OptiplantApplicationTests in 2.002 seconds (process running for 23.529)
-]]></system-out>
-  </testcase>
+  <testcase name="branchCreatedPublishesCreatedEventOnBranchesTopic" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.49"/>
+  <testcase name="branchUpdatedPublishesUpdatedEventOnBranchesTopic" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.005"/>
+  <testcase name="exposesExactlyTheFrontendRealtimeTopicContract" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.028"/>
+  <testcase name="purchaseOrderEventPreservesStatusForFrontendUpsert" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.005"/>
+  <testcase name="productDeletedPublishesDeletedEventOnProductsTopic" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.007"/>
+  <testcase name="deletedProductEventDoesNotLeakStaleEntityData" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.005"/>
+  <testcase name="inventorySendFailureIsSwallowedSoBusinessTransactionCanContinue" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.037"/>
+  <testcase name="inventoryUpdatesKeepRawDtoPayloadForBackwardCompatibility" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.004"/>
+  <testcase name="saleUpdatedPublishesUpdatedEventOnSalesTopic" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.004"/>
+  <testcase name="updatedEventsNeverUseCreateSemantics" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.012"/>
+  <testcase name="purchaseOrderUpdatedPublishesUpdatedEventOnPurchaseOrdersTopic" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.003"/>
+  <testcase name="saleEventPreservesStatusForFrontendUpsert" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.008"/>
+  <testcase name="realtimeEventUpdatedFactoryUsesUpdatedActionAndKeepsPayloadInstance" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.003"/>
+  <testcase name="inventoryMovementEventPreservesMovementMetadataForFrontendFiltering" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.004"/>
+  <testcase name="saleCreatedPublishesCreatedEventOnSalesTopic" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.005"/>
+  <testcase name="branchDeletedPublishesDeletedEventOnBranchesTopic" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.003"/>
+  <testcase name="purchaseOrderCreatedPublishesCreatedEventOnPurchaseOrdersTopic" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.003"/>
+  <testcase name="inventoryMovementCreatedPublishesCreatedEventOnInventoryMovementsTopic" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.007"/>
+  <testcase name="createdEventsNeverUseDeleteSemantics" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.003"/>
+  <testcase name="deletedBranchEventDoesNotLeakStaleEntityData" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.004"/>
+  <testcase name="realtimeEventCreatedFactoryUsesCreatedActionAndKeepsPayloadInstance" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.001"/>
+  <testcase name="realtimeEventDeletedFactoryUsesDeletedActionAndNullPayload" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.007"/>
+  <testcase name="productCreatedPublishesCreatedEventOnProductsTopic" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.003"/>
+  <testcase name="productUpdatedPublishesUpdatedEventOnProductsTopic" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.003"/>
+  <testcase name="eventEnvelopeSendFailureIsSwallowedSoBusinessTransactionCanContinue" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.01"/>
+  <testcase name="transferUpdatesKeepRawDtoPayloadForBackwardCompatibility" classname="com.example.optiplant.services.RealtimeNotificationServiceTest" time="0.003"/>
 </testsuite>
