@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
+/**
+ * Coordinates sale creation, sale cancellation, and inventory side effects.
+ */
 @Service
 public class SaleService {
 
@@ -50,10 +53,21 @@ public class SaleService {
         this.realtimeNotificationService = realtimeNotificationService;
     }
 
+    /**
+     * Lists all sales.
+     *
+     * @return sale responses
+     */
     public List<SaleResponse> findAll() {
         return saleRepository.findAll().stream().map(SaleResponse::from).toList();
     }
 
+    /**
+     * Lists all sales or filters them by branch.
+     *
+     * @param branchId optional branch identifier
+     * @return sale responses
+     */
     public List<SaleResponse> findAll(UUID branchId) {
         if (branchId == null) {
             return findAll();
@@ -61,10 +75,22 @@ public class SaleService {
         return saleRepository.findByBranchId(branchId).stream().map(SaleResponse::from).toList();
     }
 
+    /**
+     * Finds a sale by identifier.
+     *
+     * @param id sale identifier
+     * @return sale response
+     */
     public SaleResponse findById(UUID id) {
         return SaleResponse.from(getSale(id));
     }
 
+    /**
+     * Creates a completed sale and decreases stock for each item.
+     *
+     * @param request sale data
+     * @return created sale response
+     */
     @Transactional
     public SaleResponse create(SaleRequest request) {
         currentUserService.getAuthenticatedUser();
@@ -121,6 +147,12 @@ public class SaleService {
                 .orElseThrow(() -> new NotFoundException("Sale not found"));
     }
 
+    /**
+     * Cancels a completed sale and restores stock for each item.
+     *
+     * @param id sale identifier
+     * @return cancelled sale response
+     */
     @Transactional
     public SaleResponse cancel(UUID id) {
         currentUserService.getAuthenticatedUser();

@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
+/**
+ * Coordinates transfer lifecycle changes and inventory side effects between
+ * branches.
+ */
 @Service
 public class TransferService {
 
@@ -49,22 +53,51 @@ public class TransferService {
         this.realtimeNotificationService = realtimeNotificationService;
     }
 
+    /**
+     * Lists all transfers.
+     *
+     * @return transfer responses
+     */
     public List<TransferResponse> findAll() {
         return transferRepository.findAll().stream().map(TransferResponse::from).toList();
     }
 
+    /**
+     * Lists transfers sent from a branch.
+     *
+     * @param branchId origin branch identifier
+     * @return transfer responses
+     */
     public List<TransferResponse> findByFromBranchId(UUID branchId) {
         return transferRepository.findByFromBranchId(branchId).stream().map(TransferResponse::from).toList();
     }
 
+    /**
+     * Lists transfers sent to a branch.
+     *
+     * @param branchId destination branch identifier
+     * @return transfer responses
+     */
     public List<TransferResponse> findByToBranchId(UUID branchId) {
         return transferRepository.findByToBranchId(branchId).stream().map(TransferResponse::from).toList();
     }
 
+    /**
+     * Finds a transfer by identifier.
+     *
+     * @param id transfer identifier
+     * @return transfer response
+     */
     public TransferResponse findById(UUID id) {
         return TransferResponse.from(getTransfer(id));
     }
 
+    /**
+     * Creates a pending transfer.
+     *
+     * @param request transfer data
+     * @return created transfer response
+     */
     @Transactional
     public TransferResponse create(TransferRequest request) {
         currentUserService.getAuthenticatedUser();
@@ -73,6 +106,12 @@ public class TransferService {
         return TransferResponse.from(saved);
     }
 
+    /**
+     * Creates a transfer and immediately registers outgoing and incoming stock.
+     *
+     * @param request transfer data
+     * @return completed transfer response
+     */
     @Transactional
     public TransferResponse createCompleted(TransferRequest request) {
         currentUserService.getAuthenticatedUser();
@@ -87,6 +126,12 @@ public class TransferService {
         return TransferResponse.from(saved);
     }
 
+    /**
+     * Approves a pending transfer and registers stock leaving the origin branch.
+     *
+     * @param id transfer identifier
+     * @return approved transfer response
+     */
     @Transactional
     public TransferResponse approve(UUID id) {
         currentUserService.getAuthenticatedUser();
@@ -104,6 +149,12 @@ public class TransferService {
         return TransferResponse.from(saved);
     }
 
+    /**
+     * Completes an in-transit transfer and registers stock entering the destination branch.
+     *
+     * @param id transfer identifier
+     * @return completed transfer response
+     */
     @Transactional
     public TransferResponse complete(UUID id) {
         currentUserService.getAuthenticatedUser();
@@ -121,6 +172,12 @@ public class TransferService {
         return TransferResponse.from(saved);
     }
 
+    /**
+     * Cancels a transfer and restores origin stock when it had already left.
+     *
+     * @param id transfer identifier
+     * @return cancelled transfer response
+     */
     @Transactional
     public TransferResponse cancel(UUID id) {
         currentUserService.getAuthenticatedUser();

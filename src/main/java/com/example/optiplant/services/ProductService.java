@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
+/**
+ * Coordinates product catalog reads and administrative product mutations.
+ */
 @Service
 public class ProductService {
 
@@ -33,14 +36,31 @@ public class ProductService {
         this.realtimeNotificationService = realtimeNotificationService;
     }
 
+    /**
+     * Lists all products.
+     *
+     * @return product responses
+     */
     public List<ProductResponse> findAll() {
         return productRepository.findAll().stream().map(ProductResponse::from).toList();
     }
 
+    /**
+     * Finds a product by identifier.
+     *
+     * @param id product identifier
+     * @return product response
+     */
     public ProductResponse findById(UUID id) {
         return ProductResponse.from(getProduct(id));
     }
 
+    /**
+     * Creates a product and broadcasts a realtime event.
+     *
+     * @param request product data
+     * @return created product response
+     */
     @Transactional
     public ProductResponse create(ProductRequest request) {
         String sku = request.sku().trim();
@@ -55,6 +75,13 @@ public class ProductService {
         return response;
     }
 
+    /**
+     * Updates a product and broadcasts a realtime event.
+     *
+     * @param id product identifier
+     * @param request product data
+     * @return updated product response
+     */
     @Transactional
     public ProductResponse update(UUID id, ProductRequest request) {
         Product product = getProduct(id);
@@ -71,12 +98,23 @@ public class ProductService {
         return response;
     }
 
+    /**
+     * Deletes a product and broadcasts a realtime event.
+     *
+     * @param id product identifier
+     */
     @Transactional
     public void delete(UUID id) {
         productRepository.delete(getProduct(id));
         realtimeNotificationService.productDeleted(id);
     }
 
+    /**
+     * Finds a product entity by identifier.
+     *
+     * @param id product identifier
+     * @return matching product entity
+     */
     Product getProduct(UUID id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found"));

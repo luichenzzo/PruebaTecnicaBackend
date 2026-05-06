@@ -11,6 +11,9 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+/**
+ * Line item belonging to an inter-branch transfer.
+ */
 @Entity
 @Table(name = "transfer_items")
 @Getter

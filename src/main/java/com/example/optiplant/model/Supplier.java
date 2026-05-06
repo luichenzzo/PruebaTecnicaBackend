@@ -10,6 +10,9 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Supplier entity used to group product sourcing metadata.
+ */
 @Entity
 @Table(name = "suppliers")
 @Getter

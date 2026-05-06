@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for current inventory queries and manual stock adjustments.
+ */
 @RestController
 @RequestMapping("/api/inventory")
 public class InventoryController {
@@ -25,24 +28,49 @@ public class InventoryController {
         this.inventoryService = inventoryService;
     }
 
+    /**
+     * Lists inventory, optionally filtered by branch.
+     *
+     * @param branchId optional branch identifier
+     * @return inventory rows
+     */
     @GetMapping
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
     public List<InventoryResponse> findAll(@RequestParam(required = false) UUID branchId) {
         return inventoryService.findAll(branchId);
     }
 
+    /**
+     * Lists inventory for a branch.
+     *
+     * @param branchId branch identifier
+     * @return inventory rows for the branch
+     */
     @GetMapping("/branch/{branchId}")
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER')")
     public List<InventoryResponse> findByBranch(@PathVariable UUID branchId) {
         return inventoryService.findAll(branchId);
     }
 
+    /**
+     * Finds an inventory row by identifier.
+     *
+     * @param id inventory identifier
+     * @return matching inventory row
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
     public InventoryResponse findById(@PathVariable UUID id) {
         return inventoryService.findById(id);
     }
 
+    /**
+     * Finds inventory for a product at a branch.
+     *
+     * @param productId product identifier
+     * @param branchId branch identifier
+     * @return matching inventory row
+     */
     @GetMapping("/lookup")
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
     public InventoryResponse findByProductAndBranch(
@@ -52,6 +80,12 @@ public class InventoryController {
         return inventoryService.findByProductAndBranch(productId, branchId);
     }
 
+    /**
+     * Sets inventory quantity through a manual adjustment.
+     *
+     * @param request validated adjustment payload
+     * @return adjusted inventory row
+     */
     @PatchMapping("/adjust")
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public InventoryResponse adjustQuantity(@Valid @RequestBody InventoryAdjustmentRequest request) {

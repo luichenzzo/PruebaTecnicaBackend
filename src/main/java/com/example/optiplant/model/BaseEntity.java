@@ -22,6 +22,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Base mapped superclass that provides UUID identity and audit metadata for
+ * persistent entities.
+ */
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Getter
@@ -52,6 +56,9 @@ public abstract class BaseEntity {
     @JoinColumn(name = "updated_by_id")
     private User updatedBy;
 
+    /**
+     * Initializes audit timestamps before an entity is first persisted.
+     */
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
@@ -59,6 +66,9 @@ public abstract class BaseEntity {
         this.updatedAt = now;
     }
 
+    /**
+     * Refreshes the update timestamp before an entity update is persisted.
+     */
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();

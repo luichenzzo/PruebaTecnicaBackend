@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for auditable inventory movement history.
+ */
 @RestController
 @RequestMapping("/api/inventory-movements")
 @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
@@ -21,6 +24,12 @@ public class InventoryMovementController {
         this.movementService = movementService;
     }
 
+    /**
+     * Lists inventory movements, optionally filtered by inventory row.
+     *
+     * @param inventoryId optional inventory identifier
+     * @return movement history
+     */
     @GetMapping
     public List<InventoryMovementResponse> findAll(@RequestParam(required = false) UUID inventoryId) {
         if (inventoryId != null) {

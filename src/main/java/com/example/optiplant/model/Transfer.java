@@ -17,6 +17,9 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Inter-branch transfer aggregate that moves stock between branches.
+ */
 @Entity
 @Table(name = "transfers")
 @Getter

@@ -18,6 +18,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Handles account registration, login, token issuance, and user profile lookups.
+ */
 @Service
 public class AuthService {
 
@@ -41,6 +44,12 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
     }
 
+    /**
+     * Registers a new operator account and returns an authentication token.
+     *
+     * @param request registration data
+     * @return token response for the created user
+     */
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         String username = request.username().trim();
@@ -71,6 +80,12 @@ public class AuthService {
         return new AuthResponse(jwtService.generateToken(savedUser), UserResponse.from(savedUser));
     }
 
+    /**
+     * Authenticates an existing user and returns a JWT response.
+     *
+     * @param request login credentials
+     * @return token response for the authenticated user
+     */
     @Transactional
     public AuthResponse login(LoginRequest request) {
         String usernameOrEmail = request.usernameOrEmail().trim();
@@ -86,12 +101,23 @@ public class AuthService {
         return new AuthResponse(jwtService.generateToken(user), UserResponse.from(user));
     }
 
+    /**
+     * Returns API-safe details for the authenticated username.
+     *
+     * @param username authenticated username
+     * @return user response
+     */
     public UserResponse getCurrentUser(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("User not found"));
         return UserResponse.from(user);
     }
 
+    /**
+     * Lists all users as API-safe response payloads.
+     *
+     * @return all users
+     */
     public java.util.List<UserResponse> findAll() {
         return userRepository.findAll().stream().map(UserResponse::from).toList();
     }

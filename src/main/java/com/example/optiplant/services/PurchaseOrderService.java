@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
+/**
+ * Coordinates purchase order creation, receipt, cancellation, and inventory
+ * side effects.
+ */
 @Service
 public class PurchaseOrderService {
 
@@ -55,14 +59,31 @@ public class PurchaseOrderService {
         this.realtimeNotificationService = realtimeNotificationService;
     }
 
+    /**
+     * Lists all purchase orders.
+     *
+     * @return purchase order responses
+     */
     public List<PurchaseOrderResponse> findAll() {
         return purchaseOrderRepository.findAll().stream().map(PurchaseOrderResponse::from).toList();
     }
 
+    /**
+     * Finds a purchase order by identifier.
+     *
+     * @param id purchase order identifier
+     * @return purchase order response
+     */
     public PurchaseOrderResponse findById(UUID id) {
         return PurchaseOrderResponse.from(getOrder(id));
     }
 
+    /**
+     * Creates a pending purchase order.
+     *
+     * @param request purchase order data
+     * @return created purchase order response
+     */
     @Transactional
     public PurchaseOrderResponse create(PurchaseOrderRequest request) {
         currentUserService.getAuthenticatedUser();
@@ -107,6 +128,12 @@ public class PurchaseOrderService {
         return response;
     }
 
+    /**
+     * Marks a purchase order as received and increases inventory for each item.
+     *
+     * @param id purchase order identifier
+     * @return received purchase order response
+     */
     @Transactional
     public PurchaseOrderResponse receive(UUID id) {
         currentUserService.getAuthenticatedUser();
@@ -139,6 +166,12 @@ public class PurchaseOrderService {
         return response;
     }
 
+    /**
+     * Cancels a pending purchase order.
+     *
+     * @param id purchase order identifier
+     * @return cancelled purchase order response
+     */
     @Transactional
     public PurchaseOrderResponse cancel(UUID id) {
         currentUserService.getAuthenticatedUser();

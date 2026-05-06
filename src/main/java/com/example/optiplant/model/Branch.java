@@ -10,6 +10,9 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Physical business branch that owns users and product inventory.
+ */
 @Entity
 @Table(name = "branches")
 @Getter

@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
+/**
+ * Coordinates inventory reads, stock adjustments, and movement audit records.
+ */
 @Service
 public class InventoryService {
 
@@ -45,6 +48,12 @@ public class InventoryService {
         this.realtimeNotificationService = realtimeNotificationService;
     }
 
+    /**
+     * Lists inventory rows, optionally constrained to a branch.
+     *
+     * @param branchId optional branch identifier
+     * @return inventory responses
+     */
     public List<InventoryResponse> findAll(UUID branchId) {
         List<Inventory> inventories = branchId == null
                 ? inventoryRepository.findAll()
@@ -52,15 +61,34 @@ public class InventoryService {
         return inventories.stream().map(InventoryResponse::from).toList();
     }
 
+    /**
+     * Finds an inventory row by identifier.
+     *
+     * @param id inventory identifier
+     * @return inventory response
+     */
     public InventoryResponse findById(UUID id) {
         return InventoryResponse.from(getInventory(id));
     }
 
+    /**
+     * Finds the inventory row for a product at a branch.
+     *
+     * @param productId product identifier
+     * @param branchId branch identifier
+     * @return inventory response
+     */
     public InventoryResponse findByProductAndBranch(UUID productId, UUID branchId) {
         return InventoryResponse.from(inventoryRepository.findByProductIdAndBranchId(productId, branchId)
                 .orElseThrow(() -> new NotFoundException("Inventory not found for product and branch")));
     }
 
+    /**
+     * Sets a quantity through an adjustment and registers the corresponding movement.
+     *
+     * @param request adjustment data
+     * @return adjusted inventory response
+     */
     @Transactional
     public InventoryResponse adjustQuantity(InventoryAdjustmentRequest request) {
         currentUserService.getAuthenticatedUser();
@@ -83,6 +111,19 @@ public class InventoryService {
         return InventoryResponse.from(savedInventory);
     }
 
+    /**
+     * Increases stock for a product at a branch and records a movement.
+     *
+     * @param productId product identifier
+     * @param branchId branch identifier
+     * @param quantity quantity to add
+     * @param movementType movement type to record
+     * @param reference business reference number
+     * @param notes movement notes
+     * @param sourceType source aggregate type
+     * @param sourceId source aggregate identifier
+     * @return saved inventory entity
+     */
     Inventory increaseStock(
             UUID productId,
             UUID branchId,
@@ -101,6 +142,19 @@ public class InventoryService {
         return savedInventory;
     }
 
+    /**
+     * Decreases stock for a product at a branch and records a movement.
+     *
+     * @param productId product identifier
+     * @param branchId branch identifier
+     * @param quantity quantity to subtract
+     * @param movementType movement type to record
+     * @param reference business reference number
+     * @param notes movement notes
+     * @param sourceType source aggregate type
+     * @param sourceId source aggregate identifier
+     * @return saved inventory entity
+     */
     Inventory decreaseStock(
             UUID productId,
             UUID branchId,
@@ -125,6 +179,17 @@ public class InventoryService {
         return savedInventory;
     }
 
+    /**
+     * Persists an inventory movement and emits realtime inventory notifications.
+     *
+     * @param inventory affected inventory entity
+     * @param type movement type
+     * @param quantity movement quantity
+     * @param reference business reference number
+     * @param notes movement notes
+     * @param sourceType source aggregate type
+     * @param sourceId source aggregate identifier
+     */
     void registerMovement(
             Inventory inventory,
             MovementType type,
@@ -147,11 +212,24 @@ public class InventoryService {
         realtimeNotificationService.inventoryUpdated(com.example.optiplant.dto.InventoryResponse.from(inventory));
     }
 
+    /**
+     * Finds an inventory entity by identifier.
+     *
+     * @param id inventory identifier
+     * @return matching inventory entity
+     */
     Inventory getInventory(UUID id) {
         return inventoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Inventory not found"));
     }
 
+    /**
+     * Finds or creates the inventory row for a product at a branch.
+     *
+     * @param productId product identifier
+     * @param branchId branch identifier
+     * @return existing or newly persisted inventory entity
+     */
     Inventory getOrCreateInventory(UUID productId, UUID branchId) {
         return inventoryRepository.findByProductIdAndBranchId(productId, branchId)
                 .orElseGet(() -> {

@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
+/**
+ * Coordinates branch catalog reads and administrative branch changes.
+ */
 @Service
 public class BranchService {
 
@@ -30,14 +33,31 @@ public class BranchService {
         this.realtimeNotificationService = realtimeNotificationService;
     }
 
+    /**
+     * Lists all branches.
+     *
+     * @return branch responses
+     */
     public List<BranchResponse> findAll() {
         return branchRepository.findAll().stream().map(BranchResponse::from).toList();
     }
 
+    /**
+     * Finds a branch by identifier.
+     *
+     * @param id branch identifier
+     * @return branch response
+     */
     public BranchResponse findById(UUID id) {
         return BranchResponse.from(getBranch(id));
     }
 
+    /**
+     * Creates a branch and broadcasts a realtime event.
+     *
+     * @param request branch data
+     * @return created branch response
+     */
     @Transactional
     public BranchResponse create(BranchRequest request) {
         User user = currentUserService.getAuthenticatedUser();
@@ -54,6 +74,13 @@ public class BranchService {
         return response;
     }
 
+    /**
+     * Updates a branch and broadcasts a realtime event.
+     *
+     * @param id branch identifier
+     * @param request branch data
+     * @return updated branch response
+     */
     @Transactional
     public BranchResponse update(UUID id, BranchRequest request) {
         User user = currentUserService.getAuthenticatedUser();
@@ -71,6 +98,11 @@ public class BranchService {
         return response;
     }
 
+    /**
+     * Deletes a branch and broadcasts a realtime event.
+     *
+     * @param id branch identifier
+     */
     @Transactional
     public void delete(UUID id) {
         User user = currentUserService.getAuthenticatedUser();

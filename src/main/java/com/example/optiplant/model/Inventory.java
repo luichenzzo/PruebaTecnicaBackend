@@ -15,6 +15,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Current stock balance for a product at a branch.
+ */
 @Entity
 @Table(name = "inventories", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"product_id", "branch_id"})

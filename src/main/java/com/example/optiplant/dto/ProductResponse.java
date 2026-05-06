@@ -4,6 +4,9 @@ import com.example.optiplant.model.Product;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * Response payload for product catalog entries.
+ */
 public record ProductResponse(
         UUID id,
         String sku,
@@ -16,6 +19,12 @@ public record ProductResponse(
         UUID updatedById
 ) {
 
+    /**
+     * Maps a product entity into its API response form.
+     *
+     * @param product source product entity
+     * @return product response
+     */
     public static ProductResponse from(Product product) {
         return new ProductResponse(
                 product.getId(),

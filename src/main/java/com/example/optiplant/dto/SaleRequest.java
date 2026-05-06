@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Request payload for creating a sale.
+ */
 public record SaleRequest(
         @Size(max = 100) String saleNumber,
         @NotNull UUID branchId,

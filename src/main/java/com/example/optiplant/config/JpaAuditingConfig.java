@@ -10,10 +10,20 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+/**
+ * Configures Spring Data auditing so created and updated entities can capture
+ * the authenticated user.
+ */
 @Configuration
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class JpaAuditingConfig {
 
+    /**
+     * Resolves the current auditor from the Spring Security context.
+     *
+     * @param userRepository repository used to load a user principal by username
+     * @return auditor provider for JPA auditing callbacks
+     */
     @Bean
     public AuditorAware<User> auditorAware(UserRepository userRepository) {
         return () -> {

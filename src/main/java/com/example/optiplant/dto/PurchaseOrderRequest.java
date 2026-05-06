@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Request payload for creating a purchase order.
+ */
 public record PurchaseOrderRequest(
         @Size(max = 100) String orderNumber,
         @NotNull UUID supplierId,

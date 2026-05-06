@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.UUID;
 
+/**
+ * Registration payload accepted by the authentication endpoint.
+ */
 public record RegisterRequest(
         @NotBlank @Size(max = 100) String username,
         @NotBlank @Size(max = 150) String fullName,

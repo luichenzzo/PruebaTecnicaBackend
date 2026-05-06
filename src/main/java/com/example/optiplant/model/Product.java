@@ -14,6 +14,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Product catalog entity with supplier, unit of measure, and default costing
+ * metadata.
+ */
 @Entity
 @Table(name = "products")
 @Getter

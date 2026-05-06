@@ -18,6 +18,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Purchase order aggregate used to request and receive stock from suppliers.
+ */
 @Entity
 @Table(name = "purchase_orders")
 @Getter

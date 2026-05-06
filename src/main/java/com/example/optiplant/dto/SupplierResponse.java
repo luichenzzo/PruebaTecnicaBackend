@@ -3,6 +3,9 @@ package com.example.optiplant.dto;
 import com.example.optiplant.model.Supplier;
 import java.util.UUID;
 
+/**
+ * Response payload for supplier details.
+ */
 public record SupplierResponse(
         UUID id,
         String name,
@@ -13,6 +16,12 @@ public record SupplierResponse(
         UUID updatedById
 ) {
 
+    /**
+     * Maps a supplier entity into its API response form.
+     *
+     * @param supplier source supplier entity
+     * @return supplier response
+     */
     public static SupplierResponse from(Supplier supplier) {
         return new SupplierResponse(
                 supplier.getId(),

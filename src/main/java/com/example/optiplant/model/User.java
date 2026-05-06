@@ -20,6 +20,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Application user entity and Spring Security principal.
+ */
 @Entity
 @Table(name = "users")
 @Getter
@@ -47,31 +50,61 @@ public class User extends BaseEntity implements UserDetails {
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
+    /**
+     * Returns authorities derived from the persisted role.
+     *
+     * @return granted authorities for Spring Security
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
+    /**
+     * Returns the stored password hash used by Spring Security.
+     *
+     * @return password hash
+     */
     @Override
     public String getPassword() {
         return passwordHash;
     }
 
+    /**
+     * Indicates whether the account is non-expired.
+     *
+     * @return always {@code true}
+     */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    /**
+     * Indicates whether the account is non-locked.
+     *
+     * @return always {@code true}
+     */
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    /**
+     * Indicates whether credentials are non-expired.
+     *
+     * @return always {@code true}
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    /**
+     * Indicates whether the account is enabled.
+     *
+     * @return always {@code true}
+     */
     @Override
     public boolean isEnabled() {
         return true;

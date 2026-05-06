@@ -6,10 +6,18 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+/**
+ * Configures STOMP-over-WebSocket endpoints and in-memory topic brokering.
+ */
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    /**
+     * Enables topic and queue destinations for outbound WebSocket messages.
+     *
+     * @param config broker registry to configure
+     */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         // Simple in-memory broker for topic subscriptions
@@ -17,6 +25,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.setApplicationDestinationPrefixes("/app");
     }
 
+    /**
+     * Registers the WebSocket handshake endpoint used by browser clients.
+     *
+     * @param registry STOMP endpoint registry
+     */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // SockJS fallback endpoint

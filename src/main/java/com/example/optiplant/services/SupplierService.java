@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
+/**
+ * Provides read access to supplier data.
+ */
 @Service
 public class SupplierService {
 
@@ -17,10 +20,21 @@ public class SupplierService {
         this.supplierRepository = supplierRepository;
     }
 
+    /**
+     * Lists all suppliers.
+     *
+     * @return supplier responses
+     */
     public List<SupplierResponse> findAll() {
         return supplierRepository.findAll().stream().map(SupplierResponse::from).toList();
     }
 
+    /**
+     * Finds a supplier by identifier.
+     *
+     * @param id supplier identifier
+     * @return supplier response
+     */
     public SupplierResponse findById(UUID id) {
         Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Supplier not found"));

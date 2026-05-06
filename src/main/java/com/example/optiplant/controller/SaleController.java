@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for sales and sale cancellation workflows.
+ */
 @RestController
 @RequestMapping("/api/sales")
 public class SaleController {
@@ -27,18 +30,36 @@ public class SaleController {
     }
 
 
+    /**
+     * Lists sales, optionally filtered by branch.
+     *
+     * @param branchId optional branch identifier
+     * @return sale summaries
+     */
     @GetMapping
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
     public List<SaleResponse> findAll(@org.springframework.web.bind.annotation.RequestParam(required = false) UUID branchId) {
         return saleService.findAll(branchId);
     }
 
+    /**
+     * Finds a sale by identifier.
+     *
+     * @param id sale identifier
+     * @return matching sale
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
     public SaleResponse findById(@PathVariable UUID id) {
         return saleService.findById(id);
     }
 
+    /**
+     * Creates a completed sale and decreases inventory.
+     *
+     * @param request validated sale payload
+     * @return created sale
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
@@ -46,6 +67,12 @@ public class SaleController {
         return saleService.create(request);
     }
 
+    /**
+     * Cancels a completed sale and restores stock.
+     *
+     * @param id sale identifier
+     * @return cancelled sale
+     */
     @PostMapping("/{id}/cancel")
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public SaleResponse cancel(@PathVariable UUID id) {

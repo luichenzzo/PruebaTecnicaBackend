@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for branch catalog operations.
+ */
 @RestController
 @RequestMapping("/api/branches")
 public class BranchController {
@@ -28,18 +31,35 @@ public class BranchController {
         this.branchService = branchService;
     }
 
+    /**
+     * Lists all branches visible to authenticated users.
+     *
+     * @return branch summaries
+     */
     @GetMapping
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
     public List<BranchResponse> findAll() {
         return branchService.findAll();
     }
 
+    /**
+     * Finds a branch by identifier.
+     *
+     * @param id branch identifier
+     * @return matching branch
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('OPERATOR', 'MANAGER', 'ADMIN')")
     public BranchResponse findById(@PathVariable UUID id) {
         return branchService.findById(id);
     }
 
+    /**
+     * Creates a new branch.
+     *
+     * @param request validated branch payload
+     * @return created branch
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
@@ -47,12 +67,24 @@ public class BranchController {
         return branchService.create(request);
     }
 
+    /**
+     * Updates an existing branch.
+     *
+     * @param id branch identifier
+     * @param request validated branch payload
+     * @return updated branch
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public BranchResponse update(@PathVariable UUID id, @Valid @RequestBody BranchRequest request) {
         return branchService.update(id, request);
     }
 
+    /**
+     * Deletes a branch.
+     *
+     * @param id branch identifier
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")

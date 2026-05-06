@@ -14,6 +14,10 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+/**
+ * Auditable inventory movement that records the source and quantity of a stock
+ * change.
+ */
 @Entity
 @Table(name = "inventory_movements")
 @Getter

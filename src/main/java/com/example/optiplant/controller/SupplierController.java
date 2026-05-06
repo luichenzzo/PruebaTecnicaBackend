@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for supplier lookup endpoints.
+ */
 @RestController
 @RequestMapping("/api/suppliers")
 public class SupplierController {
@@ -19,11 +22,22 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
+    /**
+     * Lists suppliers.
+     *
+     * @return supplier summaries
+     */
     @GetMapping
     public List<SupplierResponse> findAll() {
         return supplierService.findAll();
     }
 
+    /**
+     * Finds a supplier by identifier.
+     *
+     * @param id supplier identifier
+     * @return matching supplier
+     */
     @GetMapping("/{id}")
     public SupplierResponse findById(@PathVariable UUID id) {
         return supplierService.findById(id);

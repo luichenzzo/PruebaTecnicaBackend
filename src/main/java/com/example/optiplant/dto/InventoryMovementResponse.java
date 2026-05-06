@@ -6,6 +6,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Response payload for a single auditable inventory movement.
+ */
 public record InventoryMovementResponse(
         UUID id,
         UUID inventoryId,
@@ -23,6 +26,12 @@ public record InventoryMovementResponse(
         UUID createdById
 ) {
 
+    /**
+     * Maps an inventory movement entity into its API response form.
+     *
+     * @param movement source inventory movement entity
+     * @return inventory movement response
+     */
     public static InventoryMovementResponse from(InventoryMovement movement) {
         return new InventoryMovementResponse(
                 movement.getId(),

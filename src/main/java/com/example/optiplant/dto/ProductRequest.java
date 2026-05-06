@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * Request payload for creating or updating products.
+ */
 public record ProductRequest(
         @NotBlank @Size(max = 100) String sku,
         @NotBlank @Size(max = 200) String name,

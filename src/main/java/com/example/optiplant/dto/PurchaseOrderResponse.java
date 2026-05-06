@@ -6,6 +6,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Response payload for purchase order workflow state and line items.
+ */
 public record PurchaseOrderResponse(
         UUID id,
         String orderNumber,
@@ -18,6 +21,12 @@ public record PurchaseOrderResponse(
         UUID updatedById
 ) {
 
+    /**
+     * Maps a purchase order entity into its API response form.
+     *
+     * @param order source purchase order entity
+     * @return purchase order response
+     */
     public static PurchaseOrderResponse from(PurchaseOrder order) {
         return new PurchaseOrderResponse(
                 order.getId(),

@@ -18,6 +18,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Sale aggregate that records completed or cancelled outgoing stock.
+ */
 @Entity
 @Table(name = "sales")
 @Getter

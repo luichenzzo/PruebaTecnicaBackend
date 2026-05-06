@@ -6,6 +6,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Response payload for sale workflow state and line items.
+ */
 public record SaleResponse(
         UUID id,
         String saleNumber,
@@ -17,6 +20,12 @@ public record SaleResponse(
         UUID updatedById
 ) {
 
+    /**
+     * Maps a sale entity into its API response form.
+     *
+     * @param sale source sale entity
+     * @return sale response
+     */
     public static SaleResponse from(Sale sale) {
         return new SaleResponse(
                 sale.getId(),

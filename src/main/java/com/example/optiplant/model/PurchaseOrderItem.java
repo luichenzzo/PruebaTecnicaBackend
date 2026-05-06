@@ -11,6 +11,9 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+/**
+ * Line item belonging to a purchase order.
+ */
 @Entity
 @Getter
 @Setter

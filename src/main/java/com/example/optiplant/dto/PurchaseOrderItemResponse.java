@@ -4,6 +4,9 @@ import com.example.optiplant.model.PurchaseOrderItem;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * Response payload for a purchase order line item.
+ */
 public record PurchaseOrderItemResponse(
         UUID productId,
         String productSku,
@@ -13,6 +16,12 @@ public record PurchaseOrderItemResponse(
         BigDecimal lineTotal
 ) {
 
+    /**
+     * Maps a purchase order item entity into its API response form.
+     *
+     * @param item source purchase order item entity
+     * @return purchase order item response
+     */
     public static PurchaseOrderItemResponse from(PurchaseOrderItem item) {
         BigDecimal unitPrice = item.getUnitPrice() == null ? BigDecimal.ZERO : item.getUnitPrice();
         return new PurchaseOrderItemResponse(

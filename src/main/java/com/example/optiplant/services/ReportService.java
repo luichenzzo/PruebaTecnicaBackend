@@ -16,6 +16,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
+/**
+ * Builds aggregate metrics and inventory summaries for reporting endpoints.
+ */
 @Service
 public class ReportService {
 
@@ -45,6 +48,11 @@ public class ReportService {
         this.inventoryRepository = inventoryRepository;
     }
 
+    /**
+     * Calculates high-level entity counts for the dashboard overview.
+     *
+     * @return overview metrics
+     */
     public ReportOverviewResponse overview() {
         return new ReportOverviewResponse(
                 productRepository.count(),
@@ -56,6 +64,11 @@ public class ReportService {
         );
     }
 
+    /**
+     * Groups inventory by product and sums quantity and reserved values.
+     *
+     * @return consolidated inventory rows
+     */
     public List<InventorySummaryResponse> consolidatedInventory() {
         Map<UUID, List<com.example.optiplant.model.Inventory>> byProduct = inventoryRepository.findAllWithProductAndBranch()
                 .stream()

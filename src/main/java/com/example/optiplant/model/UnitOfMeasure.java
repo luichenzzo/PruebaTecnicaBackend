@@ -10,6 +10,9 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Unit of measure used to classify product quantities.
+ */
 @Entity
 @Table(name = "unit_of_measure")
 @Getter

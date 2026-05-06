@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for registration, login, and authenticated user lookups.
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -27,22 +30,45 @@ public class AuthController {
         this.authService = authService;
     }
 
+    /**
+     * Registers a new operator account and returns a login token.
+     *
+     * @param request validated registration payload
+     * @return authentication token and created user details
+     */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
     }
 
+    /**
+     * Authenticates a user by username or email.
+     *
+     * @param request validated login payload
+     * @return authentication token and current user details
+     */
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
     }
 
+    /**
+     * Returns the currently authenticated user.
+     *
+     * @param authentication active Spring Security authentication
+     * @return current user details
+     */
     @GetMapping({"/me", "/verify"})
     public UserResponse currentUser(Authentication authentication) {
         return authService.getCurrentUser(authentication.getName());
     }
 
+    /**
+     * Lists application users for managers and administrators.
+     *
+     * @return all user summaries
+     */
     @GetMapping("/users")
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public List<UserResponse> findAllUsers() {

@@ -7,6 +7,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Resolves the authenticated domain user from the current security context.
+ */
 @Service
 public class CurrentUserService {
 
@@ -16,6 +19,11 @@ public class CurrentUserService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Returns the authenticated user entity.
+     *
+     * @return authenticated user
+     */
     public User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

@@ -5,6 +5,9 @@ import com.example.optiplant.model.enums.TransferStatus;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Response payload for transfer workflow state and line items.
+ */
 public record TransferResponse(
         UUID id,
         String transferNumber,
@@ -16,6 +19,12 @@ public record TransferResponse(
         UUID updatedById
 ) {
 
+    /**
+     * Maps a transfer entity into its API response form.
+     *
+     * @param transfer source transfer entity
+     * @return transfer response
+     */
     public static TransferResponse from(Transfer transfer) {
         return new TransferResponse(
                 transfer.getId(),

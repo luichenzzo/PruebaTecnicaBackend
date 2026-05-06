@@ -24,6 +24,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+/**
+ * Defines HTTP security, authentication, password encoding, and CORS behavior
+ * for the REST API.
+ */
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -42,6 +46,13 @@ public class SecurityConfig {
         this.allowedOrigins = allowedOrigins;
     }
 
+    /**
+     * Builds the stateless security filter chain used by all HTTP requests.
+     *
+     * @param http Spring Security HTTP configuration builder
+     * @return configured filter chain
+     * @throws Exception if the filter chain cannot be built
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -78,6 +89,12 @@ public class SecurityConfig {
                 .build();
     }
 
+    /**
+     * Creates the DAO authentication provider backed by the application's user
+     * details service.
+     *
+     * @return authentication provider for username/password login
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
@@ -85,16 +102,33 @@ public class SecurityConfig {
         return authenticationProvider;
     }
 
+    /**
+     * Exposes Spring Security's authentication manager.
+     *
+     * @param configuration authentication manager configuration
+     * @return configured authentication manager
+     * @throws Exception if the manager cannot be obtained
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
+    /**
+     * Provides the password encoder used for persisted credentials.
+     *
+     * @return BCrypt password encoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Builds CORS rules from the configured allowed origins.
+     *
+     * @return CORS configuration source applied to all endpoints
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
