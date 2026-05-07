@@ -4,9 +4,18 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
+/**
+ * Simple STOMP message controller used for WebSocket greeting messages.
+ */
 @Controller
 public class WebSocketMessageController {
 
+    /**
+     * Handles greeting messages sent to the application destination.
+     *
+     * @param message incoming greeting payload
+     * @return response sent to the greetings topic
+     */
     @MessageMapping("/hello")
     @SendTo("/topic/greetings")
     public String greeting(String message) {

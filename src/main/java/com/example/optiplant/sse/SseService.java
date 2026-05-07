@@ -7,11 +7,19 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+/**
+ * Manages active server-sent event emitters and broadcasts payloads to them.
+ */
 @Service
 public class SseService {
 
     private final Set<SseEmitter> emitters = new CopyOnWriteArraySet<>();
 
+    /**
+     * Creates and registers an SSE emitter for a connected client.
+     *
+     * @return registered emitter
+     */
     public SseEmitter createEmitter() {
         SseEmitter emitter = new SseEmitter(0L); // never timeout
         emitters.add(emitter);
@@ -20,6 +28,11 @@ public class SseService {
         return emitter;
     }
 
+    /**
+     * Sends a payload to every connected emitter and removes failed emitters.
+     *
+     * @param data payload to send
+     */
     public void sendEvent(Object data) {
         for (SseEmitter emitter : emitters) {
             try {
